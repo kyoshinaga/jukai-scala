@@ -3,7 +3,7 @@ package jukaiScala.hdflib
 /**
   * Created by kenta-yoshinaga on 2016/09/02.
   */
-trait HDF5Const {
+object HDF5Const {
   // iteration order constants
   val H5_ITER_UNKNOWN = -1
   val H5_ITER_INC     = 0

@@ -5,9 +5,10 @@ package jukaiScala.hdflib
   */
 
 import java.io._
+import jukaiScala.hdflib.HDF5Const._
 import jukaiScala.hdflib._
 
-object H5 extends HDF5Const {
+object H5 {
 
   val DEFAULT_CONST = new HDF5Properties(H5P_DEFAULT, false)
 
