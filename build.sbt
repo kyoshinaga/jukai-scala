@@ -27,7 +27,9 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "org.scalanlp" %% "breeze" % "0.12",
   "org.scalanlp" %% "breeze-natives" % "0.12",
-  "org.scalanlp" %% "breeze-viz" % "0.12"
+  "org.scalanlp" %% "breeze-viz" % "0.12",
+  "org.scala-saddle" % "saddle-core_2.11" % "1.3.4",
+  "org.scala-saddle" % "saddle-hdf5_2.11" % "1.3.4"
 )
 
 lazy val root = (project in file(".")).

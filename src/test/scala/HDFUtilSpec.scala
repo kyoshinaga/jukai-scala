@@ -5,6 +5,9 @@
 package jukaiScala.main
 
 import org.scalatest._
+import org.saddle._
+import org.saddle.io.H5Store
+import org.saddle.time._
 
 class HDFUtilSpec extends FlatSpec with Matchers {
 
@@ -13,6 +16,10 @@ class HDFUtilSpec extends FlatSpec with Matchers {
   "load" should "can read HDF5 file" in {
 
     val filePath = findPath("./data/hdf5.h5")
+
+    val fid = H5Store.createFile(filePath)
+
+    H5Store.closeFile(fid)
 
     1 should be (1)
   }
