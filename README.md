@@ -2,6 +2,8 @@
 Workspace to implement a method to support JLD input for scala.
 
 ## Tokenizer@JukaiNLP
+
+### Construction
 Tokenizer of [`JukaiNLP`](https://github.com/hshindo/JukaiNLP.jl.git). 
 
 ```julia
@@ -28,3 +30,14 @@ function Tokenizer()
 end
 ```
 
+### Training
+
+```julia
+t = Tokenizer()
+
+data = readconll(PATH_TO_TRAIN_DATA, [2, 11])
+train(t, 100, data)
+
+str = "Test"
+result = t(str)
+```

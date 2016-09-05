@@ -1,4 +1,4 @@
-package jukaiScala
+package jukaiScala.main
 
 import breeze.linalg._
 
