@@ -9,6 +9,8 @@ import org.saddle._
 import org.saddle.io.H5Store
 import org.saddle.time._
 
+import jukaiScala.hdflib._
+
 class HDFUtilSpec extends FlatSpec with Matchers {
 
   def findPath(localPath: String) = getClass.getClassLoader.getResource(localPath).getPath
@@ -17,9 +19,7 @@ class HDFUtilSpec extends FlatSpec with Matchers {
 
     val filePath = findPath("./data/hdf5.h5")
 
-    val fid = H5Store.createFile(filePath)
-
-    H5Store.closeFile(fid)
+    val fid = H5Util.openFile(filePath)
 
     1 should be (1)
   }

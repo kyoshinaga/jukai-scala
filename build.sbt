@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze-natives" % "0.12",
   "org.scalanlp" %% "breeze-viz" % "0.12",
   "org.scala-saddle" % "saddle-core_2.11" % "1.3.4",
-  "org.scala-saddle" % "saddle-hdf5_2.11" % "1.3.4"
+  "org.scala-saddle" % "saddle-hdf5_2.11" % "1.3.4",
+  "org.hdfgroup" % "hdf-java" % "2.6.1"
 )
 
 lazy val root = (project in file(".")).
