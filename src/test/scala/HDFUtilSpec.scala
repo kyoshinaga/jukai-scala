@@ -21,7 +21,7 @@ class HDFUtilSpec extends FlatSpec with Matchers {
 
     val fid = H5Util.openFile(filePath)
 
-    // H5Util.createFile(outputFilePath)
+    H5Util.createFile(outputFilePath)
 
     H5Util.closeFile(fid)
 
