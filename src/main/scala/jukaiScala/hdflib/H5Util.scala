@@ -17,6 +17,11 @@ object H5Util {
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
+
+  // Group
+  def openGroup(fileId:Int, groupName:String) = H5.H5Gopen(fileId, groupName,
+    HDF5Constants.H5P_DEFAULT)
+
   // Dataset
   def openDataset(fileId:Int, datasetName:String) = H5.H5Dopen(fileId, datasetName,
     HDF5Constants.H5P_DEFAULT)

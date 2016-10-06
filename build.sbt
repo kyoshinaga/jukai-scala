@@ -1,6 +1,6 @@
-import AssemblyKeys._
+//import AssemblyKeys._
 
-assemblySettings
+//assemblySettings
 
 name := "jukai-scala"
 
@@ -14,7 +14,7 @@ parallelExecution in Test := false
 
 crossPaths := false
 
-mainClass in assembly := Some("JukaiScala.Main")
+mainClass := Some("JukaiScala.Main")
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
@@ -33,6 +33,6 @@ libraryDependencies ++= Seq(
   "org.hdfgroup" % "hdf-java" % "2.6.1"
 )
 
-lazy val root = (project in file(".")).
-  enablePlugins(BuildInfoPlugin)
+//lazy val root = (project in file(".")).
+//  enablePlugins(BuildInfoPlugin)
 

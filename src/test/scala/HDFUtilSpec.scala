@@ -11,6 +11,8 @@ import jukaiScala.hdflib._
 import hdf.hdf5lib.H5
 import hdf.hdf5lib.HDF5Constants
 
+import scala.collection.mutable.StringBuilder
+
 class HDFUtilSpec extends FlatSpec with Matchers {
 
   def findPath(localPath: String) = getClass.getClassLoader.getResource(localPath).getPath
@@ -22,6 +24,22 @@ class HDFUtilSpec extends FlatSpec with Matchers {
 
     val fid = H5Util.openFile(filePath)
     println("fid: %d".format(fid))
+    val gid = H5Util.openGroup(fid, "Merlin")
+    println("Merlin group id: %d".format(gid))
+    val datatypeId = H5Util.openDataset(gid, "#TYPE")
+    println("Data type id : %d".format(datatypeId))
+    val tid = H5.H5Dget_type(datatypeId)
+    val sid = H5.H5Dget_space(datatypeId)
+    val stringLength = H5.H5Tget_size(tid)
+    val buffersize = stringLength * 2
+    val buff = new Array[Byte](buffersize)
+
+    println(stringLength)
+    H5.H5Dread(datatypeId, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
+      HDF5Constants.H5P_DEFAULT, buff)
+
+    val str = new String(buff)
+    println(str)
     H5Util.closeFile(fid)
 
     H5Util.createFile("%s/test.h5".format(outputFilePath))
