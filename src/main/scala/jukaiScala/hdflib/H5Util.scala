@@ -11,12 +11,17 @@ import hdf.hdf5lib.HDF5Constants
 
 object H5Util {
 
-  //def openFile(filePath:String): Int = H5.H5Fcreate(filePath, HDF5Constants.H5F_ACC_TRUNC,
-  //  HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT)
-  def openFile(filePath:String): Int = H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDWR,
+  // File
+  def openFile(filePath:String): Int = H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,
     HDF5Constants.H5P_DEFAULT)
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
+
+  // Dataset
+  def openDataset(fileId:Int, datasetName:String) = H5.H5Dopen(fileId, datasetName,
+    HDF5Constants.H5P_DEFAULT)
+
+  def closeDataset(datasetId:Int) = H5.H5Dclose(datasetId)
 
   def createFile(file:String): Unit = {
     val dims2D = Array[Long](20, 10)
@@ -59,10 +64,11 @@ object H5Util {
       case e:Exception => System.err.println(e.getMessage)
     }
 
-    var dataIn = scala.collection.mutable.Seq.fill[Long](20 * 10)(0)
+    //var dataIn = scala.collection.mutable.Seq.fill[Long](20 * 10)(0)
+    val dataIn = Array.ofDim[Long](20 * 10)
 
-    for (i <- 0 to 20){
-      for (j <- 0 to 10){
+    for (i <- 0 until 20){
+      for (j <- 0 until 10){
         dataIn(i * 10 + j) = i * 100 + j
       }
     }
@@ -74,7 +80,7 @@ object H5Util {
           HDF5Constants.H5P_DEFAULT, dataIn)
     }
     catch{
-      case e:Exception => System.err.println(e.getMessage)
+      case e:Exception => System.err.println("H5DWrite Error: %s".format(e.getMessage))
     }
     try {
       if(dataset_id >= 0)
