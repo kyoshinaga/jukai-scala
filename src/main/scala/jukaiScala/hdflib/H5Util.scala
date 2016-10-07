@@ -17,13 +17,14 @@ object H5Util {
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
-
   // Group
-  def openGroup(fileId:Int, groupName:String) = H5.H5Gopen(fileId, groupName,
+  def openGroup(locationId:Int, groupName:String) = H5.H5Gopen(locationId, groupName,
     HDF5Constants.H5P_DEFAULT)
 
+  def closeGroup(groupID:Int) = H5.H5Gclose(groupID)
+
   // Dataset
-  def openDataset(fileId:Int, datasetName:String) = H5.H5Dopen(fileId, datasetName,
+  def openDataset(locationId:Int, datasetName:String) = H5.H5Dopen(locationId, datasetName,
     HDF5Constants.H5P_DEFAULT)
 
   def closeDataset(datasetId:Int) = H5.H5Dclose(datasetId)
