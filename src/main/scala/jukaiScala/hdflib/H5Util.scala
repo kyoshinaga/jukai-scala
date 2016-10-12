@@ -29,6 +29,16 @@ object H5Util {
 
   def closeDataset(datasetId:Int) = H5.H5Dclose(datasetId)
 
+  // Read data
+  def readData(did:Int, tid:Int): Array[Byte] = {
+    val stringLength = H5.H5Tget_size(tid)
+    val buffsize = stringLength * 2
+    val buff = new Array[Byte](buffsize)
+    H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
+      HDF5Constants.H5P_DEFAULT, buff)
+    buff
+  }
+
   def createFile(file:String): Unit = {
     val dims2D = Array[Long](20, 10)
     val dsname = "2D 32-bit integer 20x10"

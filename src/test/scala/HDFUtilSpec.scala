@@ -80,18 +80,23 @@ class HDFUtilSpec extends FlatSpec with Matchers {
           println("dataset")
           val did = H5.H5Dopen(fid, gname, HDF5Constants.H5P_DEFAULT)
           val tid = H5.H5Dget_type(did)
-          val stringLength = H5.H5Tget_size(tid)
-          val buffsize = stringLength * 2
-          val buff = new Array[Byte](buffsize)
-          println("\t%d".format(buffsize))
-          H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
-            HDF5Constants.H5P_DEFAULT, buff)
+          val buff = H5Util.readData(did,tid)
           val str = new String(buff)
           println("\t%s".format(str))
       }
     }
 
+    val gname = H5.H5Lget_name_by_idx(fid, "/", HDF5Constants.H5_INDEX_NAME,
+      HDF5Constants.H5_ITER_INC, 0, HDF5Constants.H5P_DEFAULT)
+    val gid = H5.H5Gopen(fid, gname, HDF5Constants.H5P_DEFAULT)
+    val iddictid = H5.H5Gopen(gid, "iddict", HDF5Constants.H5P_DEFAULT)
+    val did = H5.H5Dopen(iddictid, "id2count", HDF5Constants.H5P_DEFAULT)
+    val tid = H5.H5Dget_type(did)
+    val dsid = H5.H5Dget_space(did)
+
     H5Util.closeFile(fid)
+
+    val ffid =
 
     1 should be (1)
   }
