@@ -1,4 +1,4 @@
-package jukaiScala.main
+package jukaiScala.Main
 
 import org.scalatest._
 

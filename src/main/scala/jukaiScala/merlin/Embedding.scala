@@ -6,10 +6,14 @@ import breeze.linalg.DenseMatrix
 /**
   * Created by kenta-yoshinaga on 2016/08/30.
   */
-class Embedding(intdim: Int, outdim: Int) {
+class Embedding(intdim: Int, outdim: Int) extends Functor{
 
-  private val w = DenseMatrix.zeros[Double](intdim, outdim)
+  val functorName = "Embedding"
 
-  // def h5load
+  val w = new Array[DenseVector[Double]](intdim).map(r =>
+    DenseVector.zeros[Double](outdim))
 
+  override def h5load(data: String): Unit = println("hogehoge")
+
+  override def convert(x: DenseMatrix[Double]): Unit = println("hoge")
 }

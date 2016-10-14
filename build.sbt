@@ -1,6 +1,6 @@
-//import AssemblyKeys._
+import AssemblyKeys._
 
-//assemblySettings
+assemblySettings
 
 name := "jukai-scala"
 
@@ -14,7 +14,7 @@ parallelExecution in Test := false
 
 crossPaths := false
 
-mainClass := Some("JukaiScala.Main")
+mainClass in assembly := Some("jukaiScala.main.jukaiNLP")
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
@@ -27,12 +27,5 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "org.scalanlp" %% "breeze" % "0.12",
   "org.scalanlp" %% "breeze-natives" % "0.12",
-  "org.scalanlp" %% "breeze-viz" % "0.12",
-  "org.scala-saddle" % "saddle-core_2.11" % "1.3.4",
-  "org.scala-saddle" % "saddle-hdf5_2.11" % "1.3.4",
-  "org.hdfgroup" % "hdf-java" % "2.6.1"
+  "org.scalanlp" %% "breeze-viz" % "0.12"
 )
-
-//lazy val root = (project in file(".")).
-//  enablePlugins(BuildInfoPlugin)
-
