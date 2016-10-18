@@ -2,13 +2,10 @@
   * Created by kenta-yoshinaga on 2016/08/25.
   */
 
-package jukaiScala.Main
+package jukaiScala.hdflib
 
+import hdf.hdf5lib.{H5, HDF5Constants}
 import org.scalatest._
-import jukaiScala.hdflib._
-import hdf.hdf5lib.H5
-import hdf.hdf5lib.HDF5Constants
-import hdf.hdf5lib.callbacks.H5P_prp_delete_func_cb
 
 class HDFUtilSpec extends FlatSpec with Matchers {
 

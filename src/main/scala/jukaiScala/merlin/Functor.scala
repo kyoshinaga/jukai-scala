@@ -1,6 +1,5 @@
 package jukaiScala.merlin
 
-import breeze.linalg.DenseVector
 import breeze.linalg.DenseMatrix
 
 /**
@@ -10,7 +9,5 @@ trait Functor {
 
   val functorName:String
 
-  def h5load(data:String)
-
-  def convert(x:DenseMatrix[Double])
+  def getFunctorName() = functorName
 }

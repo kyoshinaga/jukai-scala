@@ -1,8 +1,6 @@
-package jukaiScala.Main
+package jukaiScala.main
 
 import org.scalatest._
-
-import breeze.linalg._
 
 class JukaiScalaSpec extends FlatSpec with Matchers {
   "hoge" should "test" in {
