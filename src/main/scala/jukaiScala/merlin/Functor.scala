@@ -10,4 +10,6 @@ trait Functor {
   val functorName:String
 
   def getFunctorName() = functorName
+
+  def convert(data: DenseMatrix[Double]): DenseMatrix[Double]
 }

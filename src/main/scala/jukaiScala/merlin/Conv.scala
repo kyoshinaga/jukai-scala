@@ -1,5 +1,6 @@
 package jukaiScala.merlin
 import breeze.linalg.DenseMatrix
+import breeze.stats.distributions.Rand
 
 /**
   * Created by ubuntu on 10/17/16.
@@ -12,7 +13,7 @@ class Conv(filterRow: Int, filterCol:Int,
 
   val w = Array.ofDim[DenseMatrix[Double]](inCh, outCh).map(
     _.map(
-      _ => DenseMatrix.zeros[Double](filterRow, filterCol)
+      _ => {DenseMatrix.rand[Double](filterRow, filterCol) :+= -0.5}
     )
   )
   private val filterDim = (filterRow, filterCol)
@@ -21,14 +22,10 @@ class Conv(filterRow: Int, filterCol:Int,
 
   def h5load(data: String): Unit = println("hogehoge")
 
-  def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
-
+  override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
     val filterSize = filterRow * filterCol
     val chSize = inCh * outCh
-
     val outdims = outsize(data)
-    val work = DenseMatrix.zeros[Double](outdims.fold(1)((z,n) => z * n), filterSize * chSize)
-
     val ws2col = DenseMatrix.zeros[Double](filterSize, chSize)
 
     for(j <- 0 until inCh){
@@ -37,10 +34,16 @@ class Conv(filterRow: Int, filterCol:Int,
         ws2col(::,index) := w(j)(i).toDenseVector
       }
     }
-    ws2col
+
+    val work = im2col(data, outdims)
+
+    work * ws2col
   }
 
-  private def im2col(x: DenseMatrix[Double], work: DenseMatrix[Double]): DenseMatrix[Double] = {
+  def im2col(x: DenseMatrix[Double], outdims: Array[Int]): DenseMatrix[Double] = {
+    val filterSize = filterRow * filterCol
+    val work = DenseMatrix.zeros[Double](outdims.fold(1)((z,n) => z * n), filterSize)
+
     val x1 = x.rows
     val x2 = x.cols
     val w1 = filterRow
@@ -61,24 +64,23 @@ class Conv(filterRow: Int, filterCol:Int,
             val j1 = d1 + d2 * w1
             val j2 = k2
             if(i1 >= 0 & i1 < x1 & i2 >= 0 & i2 < x2){
-              work(j1, j2) = x(i1, i2)
+              work(j2, j1) = x(i1, i2)
             }
             else{
-              work(j1, j2) = 0
+              work(j2, j1) = 0
             }
           }
         }
       }
     }
-
-    DenseMatrix.zeros[Double](2,2)
+    work
   }
 
-  private def outsize(x: DenseMatrix[Double]): Array[Int] = {
+  def outsize(x: DenseMatrix[Double]): Array[Int] = {
     val N = 2
     val dims = Array.ofDim[Int](N)
-    dims(0) = (x.cols +  2 * paddingCol - filterCol) + strideCol
-    dims(1) = (x.rows +  2 * paddingRow - filterRow) + strideRow
+    dims(0) = (x.rows +  2 * paddingRow - filterRow) + strideRow
+    dims(1) = (x.cols +  2 * paddingCol - filterCol) + strideCol
     dims
   }
 }

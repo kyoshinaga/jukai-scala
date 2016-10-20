@@ -8,13 +8,13 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 class Linear(indim: Int, outdim: Int) extends Functor{
   override val functorName: String = "Linear"
 
-  private val w = DenseMatrix.zeros[Double](indim, outdim)
+  private val w = DenseMatrix.rand[Double](indim, outdim)
 
-  private val b = DenseVector.zeros[Double](outdim)
+  private val b = DenseVector.rand[Double](outdim)
 
   def h5load(data: String) = println("hogeLinear")
 
-  def convert(x:DenseMatrix[Double]) = {
+  override final def convert(x:DenseMatrix[Double]) = {
     val z = w.t * x
     for (i <- 0 until outdim){
       z(::,i) := z(::,i) + b

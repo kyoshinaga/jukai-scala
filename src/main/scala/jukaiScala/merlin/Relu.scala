@@ -5,13 +5,18 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 /**
   * Created by ubuntu on 10/17/16.
   */
-// class Relu {
-// }
+// class Relu extends Functor {
+//   override val functorName: String = "relu"
+//
+//   override final def convert(data: DenseMatrix[Double]) = data.map(x => if (x > 0.0) x else 0.0)
+//}
 
-object Relu{
+object Relu extends Functor{
 
-  val functorName: String = "relu"
+  override val functorName = "Relu"
 
-  def apply(m : DenseMatrix[Double]) = m.map(x => if (x > 0.0) x else 0.0)
+  override final def convert(data: DenseMatrix[Double]) = data.map(x => if (x > 0.0) x else 0.0)
+
+  def apply(m : DenseMatrix[Double]) = this.convert(m)
 
 }

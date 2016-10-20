@@ -12,8 +12,10 @@ import hdf.hdf5lib.HDF5Constants
 object H5Util {
 
   // File
-  def openFile(filePath:String): Int = H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,
-    HDF5Constants.H5P_DEFAULT)
+  def openFile(filePath:String): Int = {
+    println("Input file: %s".format(filePath))
+    H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,HDF5Constants.H5P_DEFAULT)
+  }
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
@@ -39,7 +41,7 @@ object H5Util {
     buff
   }
 
-  def createFile(file:String): Unit = {
+/*  def createFile(file:String): Unit = {
     val dims2D = Array[Long](20, 10)
     val dsname = "2D 32-bit integer 20x10"
     var file_id = -1
@@ -113,5 +115,5 @@ object H5Util {
     catch{
       case e:Exception => System.err.println(e.getMessage)
     }
-  }
+  }*/
 }
