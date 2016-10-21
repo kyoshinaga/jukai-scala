@@ -8,6 +8,7 @@ import java.io._
 
 import hdf.hdf5lib.H5
 import hdf.hdf5lib.HDF5Constants
+import shapeless.T
 
 object H5Util {
 
@@ -39,6 +40,24 @@ object H5Util {
     H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
       HDF5Constants.H5P_DEFAULT, buff)
     buff
+  }
+
+  def readData(did: Int): Array[Any] = {
+    val tid = H5.H5Dget_type(did)
+    val dsid = H5.H5Dget_space(did)
+    val dataTypeClass = H5.H5Tget_class(tid)
+//    val data = dataTypeClass match {
+//      case x:_ if x == HDF5Constants.H5T_INTEGER =>{
+//        val ndim = H5.H5Sget_simple_extent_ndims(dsid)
+//        val npoints = H5.H5Sget_simple_extent_npoints(dsid)
+//        val buff = new Array[Long](npoints.asInstanceOf[Int])
+//        H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+//        buff
+//      }
+//      case x:_ => new Array[Int](1)
+//    }
+    val data = new Array[Int](9)
+    data
   }
 
 /*  def createFile(file:String): Unit = {

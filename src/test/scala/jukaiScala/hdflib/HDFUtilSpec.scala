@@ -49,6 +49,7 @@ class HDFUtilSpec extends FlatSpec with Matchers {
           val buff = H5Util.readData(did, tid)
           val str = new String(buff)
           println("\t%s".format(str))
+          println(H5.H5Tget_class(tid))
       }
     }
 
@@ -59,9 +60,18 @@ class HDFUtilSpec extends FlatSpec with Matchers {
     val did = H5.H5Dopen(iddictid, "id2count", HDF5Constants.H5P_DEFAULT)
     val tid = H5.H5Dget_type(did)
     val dsid = H5.H5Dget_space(did)
-    println(dsid)
+    val buff = new Array[Long](3741)
 
-    // val ffid =
+    H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+
+    println(H5.H5Tget_class(tid))
+    println(HDF5Constants.H5T_INTEGER)
+
+    println(H5.H5Sget_simple_extent_ndims(dsid))
+    println(H5.H5Sget_simple_extent_npoints(dsid))
+
+    println(buff.slice(0,6).mkString(","))
+
     H5Util.closeFile(fid)
 
     1 should be(1)
