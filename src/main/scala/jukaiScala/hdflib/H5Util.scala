@@ -8,131 +8,79 @@ import java.io._
 
 import hdf.hdf5lib.H5
 import hdf.hdf5lib.HDF5Constants
-import shapeless.T
+import hdf.hdf5lib.callbacks.H5P_prp_delete_func_cb
+
+import scala.collection.immutable.IndexedSeq
 
 object H5Util {
 
+//  def loadData(filePath: String): H5Elem = {
+//    val fid = openFile(filePath)
+//    val nameList = getNameTypeList(fid, fid, "/")
+//    val elemSeq = nameList.map(x => recursiveLoad(fid,x._1,x._2))
+//    val rootElem = H5Elem("ROOT", "Root", elemSeq: _*)
+//    rootElem
+//  }
+//
+//  def recursiveLoad(locid: Int, name: String, dataType: Int): H5Elem = dataType match{
+//    case HDF5Constants.H5O_TYPE_GROUP => {
+//      val gid = H5.H5Gopen(locid, name, HDF5Constants.H5P_DEFAULT)
+//      val gnameList = getNameTypeList(locid, gid, name)
+//      val elemSeq = gnameList.map(x => recursiveLoad(gid, x._1, x._2))
+//      H5Elem(name,"Group", elemSeq: _*)
+//    }
+//    case HDF5Constants.H5O_TYPE_DATASET => {
+//      val did = H5.H5Dopen(locid, name, HDF5Constants.H5P_DEFAULT)
+//      val data = readData(did)
+//      val text = data.map(_.asInstanceOf[Byte].toChar).mkString("")
+//      H5Elem(name,"DataSet")
+//    }
+//  }
+
   // File
   def openFile(filePath:String): Int = {
-    println("Input file: %s".format(filePath))
     H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,HDF5Constants.H5P_DEFAULT)
   }
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
-  // Group
-  def openGroup(locationId:Int, groupName:String) = H5.H5Gopen(locationId, groupName,
-    HDF5Constants.H5P_DEFAULT)
-
-  def closeGroup(groupID:Int) = H5.H5Gclose(groupID)
-
-  // Dataset
-  def openDataset(locationId:Int, datasetName:String) = H5.H5Dopen(locationId, datasetName,
-    HDF5Constants.H5P_DEFAULT)
-
-  def closeDataset(datasetId:Int) = H5.H5Dclose(datasetId)
-
-  // Read data
-  def readData(did:Int, tid:Int): Array[Byte] = {
-    val stringLength = H5.H5Tget_size(tid)
-    val buffsize = stringLength * 2
-    val buff = new Array[Byte](buffsize)
-    H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
-      HDF5Constants.H5P_DEFAULT, buff)
-    buff
-  }
-
-  def readData(did: Int): Array[Any] = {
+  def readData(did: Int): Array[_ >: Long with Byte <: AnyVal] = {
     val tid = H5.H5Dget_type(did)
     val dsid = H5.H5Dget_space(did)
     val dataTypeClass = H5.H5Tget_class(tid)
-//    val data = dataTypeClass match {
-//      case x:_ if x == HDF5Constants.H5T_INTEGER =>{
-//        val ndim = H5.H5Sget_simple_extent_ndims(dsid)
-//        val npoints = H5.H5Sget_simple_extent_npoints(dsid)
-//        val buff = new Array[Long](npoints.asInstanceOf[Int])
-//        H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
-//        buff
-//      }
-//      case x:_ => new Array[Int](1)
-//    }
-    val data = new Array[Int](9)
+    val data = dataTypeClass match {
+      case HDF5Constants.H5T_INTEGER => {
+        val ndim = H5.H5Sget_simple_extent_ndims(dsid)
+        val dims = new Array[Long](ndim)
+        val dimsmax = new Array[Long](ndim)
+        val npoints = H5.H5Sget_simple_extent_npoints(dsid)
+        val buff = new Array[Long](npoints.toInt)
+        H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+        buff
+      }
+      //case HDF5Constants.H5T_FLOAT => {
+//
+ //     }
+      case HDF5Constants.H5T_STRING => {
+        val size = H5.H5Tget_size(tid)
+        val buff =  new Array[Byte](size)
+        H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+        buff
+      }
+    }
     data
   }
 
-/*  def createFile(file:String): Unit = {
-    val dims2D = Array[Long](20, 10)
-    val dsname = "2D 32-bit integer 20x10"
-    var file_id = -1
-    var dataspace_id = -1
-    var dataset_id = -1
-
-    try {
-      file_id = H5.H5Fcreate(file, HDF5Constants.H5F_ACC_TRUNC,
-        HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT)
-    }
-    catch {
-      case e:Exception => System.err.println(e.getMessage)
-    }
-
-    try {
-      dataspace_id = H5.H5Screate_simple(2, dims2D, null)
-    }
-    catch{
-      case e:Exception => System.err.println(e.getMessage)
-    }
-
-    try{
-      if((file_id >= 0) & (dataspace_id >= 0)){
-        dataset_id = H5.H5Dcreate(file_id, dsname,
-          HDF5Constants.H5T_STD_I32LE, dataspace_id,
-          HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT,
-          HDF5Constants.H5P_DEFAULT)
-      }
-    }
-    catch{
-      case e:Exception => System.err.println(e.getMessage)
-    }
-    try {
-      if (dataspace_id >= 0)
-        H5.H5Sclose(dataspace_id)
-    }
-    catch{
-      case e:Exception => System.err.println(e.getMessage)
-    }
-
-    //var dataIn = scala.collection.mutable.Seq.fill[Long](20 * 10)(0)
-    val dataIn = Array.ofDim[Long](20 * 10)
-
-    for (i <- 0 until 20){
-      for (j <- 0 until 10){
-        dataIn(i * 10 + j) = i * 100 + j
-      }
-    }
-
-    try{
-      if (dataset_id >= 0)
-        H5.H5Dwrite(dataset_id, HDF5Constants.H5T_NATIVE_INT,
-          HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL,
-          HDF5Constants.H5P_DEFAULT, dataIn)
-    }
-    catch{
-      case e:Exception => System.err.println("H5DWrite Error: %s".format(e.getMessage))
-    }
-    try {
-      if(dataset_id >= 0)
-        H5.H5Dclose(dataset_id)
-    }
-    catch{
-      case e:Exception => System.err.println(e.getMessage)
-    }
-
-    try {
-      if (file_id >= 0)
-        H5.H5Fclose(file_id)
-    }
-    catch{
-      case e:Exception => System.err.println(e.getMessage)
-    }
-  }*/
+  def getNameTypeList(fid:Int, locid:Int, rootName: String): List[(String, Int)] = {
+    val gInfo = H5.H5Gget_info(locid)
+    val nlink = gInfo.nlinks.toInt
+    val gnameList = for {
+      i <- 0 until nlink
+      gname = H5.H5Lget_name_by_idx(fid, rootName, HDF5Constants.H5_INDEX_NAME,
+        HDF5Constants.H5_ITER_INC, i, HDF5Constants.H5P_DEFAULT)
+      oi = H5.H5Oget_info_by_name(locid, gname, HDF5Constants.H5P_DEFAULT)
+      nameAndType = gname -> oi.`type`
+    } yield nameAndType
+    gnameList.toList
+  }
 }
