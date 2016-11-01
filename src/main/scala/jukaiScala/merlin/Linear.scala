@@ -1,6 +1,7 @@
 package jukaiScala.merlin
 
 import breeze.linalg.{DenseMatrix, DenseVector}
+import jukaiScala.hdflib.H5Node
 
 /**
   * Created by ubuntu on 10/17/16.
@@ -8,13 +9,21 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 class Linear(indim: Int, outdim: Int) extends Functor{
   override val functorName: String = "Linear"
 
-  private val w = DenseMatrix.rand[Double](indim, outdim)
+  val w = DenseMatrix.zeros[Float](indim, outdim)
 
-  private val b = DenseVector.rand[Double](outdim)
+  val b = DenseVector.zeros[Float](outdim)
 
-  def h5load(data: String) = println("hogeLinear")
+  def h5load(W: H5Node, B: H5Node):Unit ={
+    for(y <- 0 until W.dims(0).toInt)
+      for(x <- 0 until W.dims(1).toInt) {
+        w(y, x) = W(y, x).asInstanceOf[Float]
+        if (y == 0){
+          b(x) = B.data(x).asInstanceOf[Float]
+        }
+      }
+  }
 
-  override final def convert(x:DenseMatrix[Double]) = {
+  override final def convert(x:DenseMatrix[Float]) = {
     val z = w.t * x
     for (i <- 0 until outdim){
       z(::,i) := z(::,i) + b

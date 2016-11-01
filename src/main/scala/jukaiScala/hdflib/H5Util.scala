@@ -14,28 +14,34 @@ import scala.collection.immutable.IndexedSeq
 
 object H5Util {
 
-//  def loadData(filePath: String): H5Elem = {
-//    val fid = openFile(filePath)
-//    val nameList = getNameTypeList(fid, fid, "/")
-//    val elemSeq = nameList.map(x => recursiveLoad(fid,x._1,x._2))
-//    val rootElem = H5Elem("ROOT", "Root", elemSeq: _*)
-//    rootElem
-//  }
-//
-//  def recursiveLoad(locid: Int, name: String, dataType: Int): H5Elem = dataType match{
-//    case HDF5Constants.H5O_TYPE_GROUP => {
-//      val gid = H5.H5Gopen(locid, name, HDF5Constants.H5P_DEFAULT)
-//      val gnameList = getNameTypeList(locid, gid, name)
-//      val elemSeq = gnameList.map(x => recursiveLoad(gid, x._1, x._2))
-//      H5Elem(name,"Group", elemSeq: _*)
-//    }
-//    case HDF5Constants.H5O_TYPE_DATASET => {
-//      val did = H5.H5Dopen(locid, name, HDF5Constants.H5P_DEFAULT)
-//      val data = readData(did)
-//      val text = data.map(_.asInstanceOf[Byte].toChar).mkString("")
-//      H5Elem(name,"DataSet")
-//    }
-//  }
+  def loadData(filePath: String): H5Node = {
+    val fid = openFile(filePath)
+    val nameList = getNameTypeList(fid, fid, "/")
+    val elemSeq = nameList.map(x => recursiveLoad(fid,x._1,x._2))
+    val rootElem = H5Elem("ROOT", "Root", elemSeq: _*)
+    rootElem
+  }
+
+  def recursiveLoad(locid: Int, name: String, dataType: Int): H5Node = dataType match{
+    case HDF5Constants.H5O_TYPE_GROUP => {
+      val gid = H5.H5Gopen(locid, name, HDF5Constants.H5P_DEFAULT)
+      val gnameList = getNameTypeList(locid, gid, name)
+      val elemSeq = gnameList.map(x => recursiveLoad(gid, x._1, x._2))
+      H5Elem(name,"Group", elemSeq: _*)
+    }
+    case HDF5Constants.H5O_TYPE_DATASET => {
+      val did = H5.H5Dopen(locid, name, HDF5Constants.H5P_DEFAULT)
+      val dsid = H5.H5Dget_space(did)
+      val ndim = H5.H5Sget_simple_extent_ndims(dsid)
+      val dims = new Array[Long](ndim)
+      H5.H5Sget_simple_extent_dims(dsid, dims, null)
+      val data = readData(did)
+      if (name == "#TYPE")
+        H5DataSet(data, name)
+      else
+        H5DataSet(data, name, ndim, dims)
+    }
+  }
 
   // File
   def openFile(filePath:String): Int = {
@@ -44,31 +50,35 @@ object H5Util {
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
-  def readData(did: Int): Array[_ >: Long with Byte <: AnyVal] = {
+  def readData(did: Int): Array[_ <: Any] = {
     val tid = H5.H5Dget_type(did)
     val dsid = H5.H5Dget_space(did)
-    val dataTypeClass = H5.H5Tget_class(tid)
-    val data = dataTypeClass match {
+    val npoints = H5.H5Sget_simple_extent_npoints(dsid)
+    val isSimple = H5.H5Sis_simple(dsid)
+    val size = H5.H5Tget_size(tid)
+
+    H5.H5Tget_class(tid) match {
       case HDF5Constants.H5T_INTEGER => {
-        val ndim = H5.H5Sget_simple_extent_ndims(dsid)
-        val dims = new Array[Long](ndim)
-        val dimsmax = new Array[Long](ndim)
-        val npoints = H5.H5Sget_simple_extent_npoints(dsid)
         val buff = new Array[Long](npoints.toInt)
         H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
-        buff
+        buff.map(_.toInt)
       }
-      //case HDF5Constants.H5T_FLOAT => {
-//
- //     }
-      case HDF5Constants.H5T_STRING => {
-        val size = H5.H5Tget_size(tid)
-        val buff =  new Array[Byte](size)
+      case HDF5Constants.H5T_FLOAT => {
+        val buff = new Array[Float](npoints.toInt)
         H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff
       }
+      case HDF5Constants.H5T_STRING if npoints == 1=> {
+        val buff =  new Array[String](npoints.toInt)
+        H5.H5Dread_string(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+        buff
+      }
+      case HDF5Constants.H5T_STRING => {
+        val buff =  new Array[AnyRef](npoints.toInt)
+        H5.H5DreadVL(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
+        buff.map(_.toString)
+      }
     }
-    data
   }
 
   def getNameTypeList(fid:Int, locid:Int, rootName: String): List[(String, Int)] = {

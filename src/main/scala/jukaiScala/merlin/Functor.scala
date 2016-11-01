@@ -11,5 +11,6 @@ trait Functor {
 
   def getFunctorName() = functorName
 
-  def convert(data: DenseMatrix[Double]): DenseMatrix[Double]
+  def convert(data: DenseMatrix[Float]): DenseMatrix[Float]
+
 }

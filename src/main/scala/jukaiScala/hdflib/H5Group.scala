@@ -23,5 +23,7 @@ final case class H5Group(nodes: Seq[H5Node]) extends H5Node {
   def label = fail("label")
   override def child = fail("child")
   override def dataType = fail("datatype")
-
+  override def data = fail("data")
+  override def ndim = fail("ndim")
+  override def dims = fail("dims")
 }

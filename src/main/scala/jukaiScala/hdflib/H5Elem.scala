@@ -32,5 +32,11 @@ class H5Elem(val label: String,
   override def text: String = (child map ( _.text)).mkString
 
   def hasChild: Boolean = (child.length > 0)
+
+  override def data = null
+
+  override def ndim: Int = -1
+
+  override def dims: Seq[_ <: Long] = Nil
 }
 
