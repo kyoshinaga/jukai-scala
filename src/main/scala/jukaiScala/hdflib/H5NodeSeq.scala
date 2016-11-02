@@ -39,7 +39,7 @@ abstract class H5NodeSeq extends AbstractSeq[H5Node]
   def apply(i: Int): H5Node = theSeq(i)
   def apply(f: H5Node => Boolean): H5NodeSeq = filter(f)
 
-  def h5_sameElements[A](that: Iterable[A]): Boolean = {
+  def h5SameElements[A](that: Iterable[A]): Boolean = {
     val these = this.iterator
     val those = that.iterator
     while(these.hasNext && those.hasNext)

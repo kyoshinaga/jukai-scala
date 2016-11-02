@@ -22,7 +22,7 @@ object H5Util {
     rootElem
   }
 
-  def recursiveLoad(locid: Int, name: String, dataType: Int): H5Node = dataType match{
+  private def recursiveLoad(locid: Int, name: String, dataType: Int): H5Node = dataType match{
     case HDF5Constants.H5O_TYPE_GROUP => {
       val gid = H5.H5Gopen(locid, name, HDF5Constants.H5P_DEFAULT)
       val gnameList = getNameTypeList(locid, gid, name)
@@ -44,13 +44,13 @@ object H5Util {
   }
 
   // File
-  def openFile(filePath:String): Int = {
+  private def openFile(filePath:String): Int = {
     H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,HDF5Constants.H5P_DEFAULT)
   }
 
   def closeFile(fid:Int): Unit = H5.H5Fclose(fid)
 
-  def readData(did: Int): Array[_ <: Any] = {
+  private def readData(did: Int): Array[_ <: Any] = {
     val tid = H5.H5Dget_type(did)
     val dsid = H5.H5Dget_space(did)
     val npoints = H5.H5Sget_simple_extent_npoints(dsid)
@@ -81,7 +81,7 @@ object H5Util {
     }
   }
 
-  def getNameTypeList(fid:Int, locid:Int, rootName: String): List[(String, Int)] = {
+  private def getNameTypeList(fid:Int, locid:Int, rootName: String): List[(String, Int)] = {
     val gInfo = H5.H5Gget_info(locid)
     val nlink = gInfo.nlinks.toInt
     val gnameList = for {

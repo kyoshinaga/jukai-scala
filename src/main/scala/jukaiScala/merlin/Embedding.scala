@@ -9,7 +9,7 @@ import jukaiScala.hdflib.H5Node
   */
 class Embedding private(val indim: Int, val outdim: Int) extends Functor{
 
-  override val functorName = "Embedding"
+  override def functorName: String = "Embedding"
 
   val w = new Array[DenseVector[Float]](indim).map(_ => DenseVector.zeros[Float](outdim))
 

@@ -7,9 +7,7 @@ import breeze.linalg.DenseMatrix
   */
 trait Functor {
 
-  val functorName:String
-
-  def getFunctorName() = functorName
+  def functorName:String
 
   def convert(data: DenseMatrix[Float]): DenseMatrix[Float]
 

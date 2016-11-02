@@ -6,7 +6,7 @@ import breeze.linalg.DenseMatrix
   */
 object Transpose extends Functor{
 
-  override val functorName: String = "Transpose"
+  override def functorName: String = "Transpose"
 
   override def convert(data: DenseMatrix[Float]): DenseMatrix[Float] = data.t
 

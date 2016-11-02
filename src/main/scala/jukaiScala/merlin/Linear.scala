@@ -7,7 +7,7 @@ import jukaiScala.hdflib.H5Node
   * Created by ubuntu on 10/17/16.
   */
 class Linear(indim: Int, outdim: Int) extends Functor{
-  override val functorName: String = "Linear"
+  override def functorName: String = "Linear"
 
   val w = DenseMatrix.zeros[Float](indim, outdim)
 

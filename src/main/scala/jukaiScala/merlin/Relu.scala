@@ -13,7 +13,7 @@ import breeze.linalg.{DenseMatrix, DenseVector}
 
 object Relu extends Functor{
 
-  override val functorName = "Relu"
+  override def functorName:String = "Relu"
 
   override final def convert(data: DenseMatrix[Float]) = data.map(x => if (x > 0.0) x else 0.0.toFloat)
 

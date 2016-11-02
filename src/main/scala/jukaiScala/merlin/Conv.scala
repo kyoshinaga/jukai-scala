@@ -10,7 +10,7 @@ class Conv(filterRow: Int, filterCol:Int,
            inCh: Int, outCh: Int,
            strideRow: Int, strideCol: Int,
            paddingRow: Int, paddingCol: Int) extends Functor{
-  override val functorName: String = "Conv"
+  override def functorName: String = "Conv"
 
   val w = Array.ofDim[DenseMatrix[Float]](inCh, outCh).map(
     _.map(

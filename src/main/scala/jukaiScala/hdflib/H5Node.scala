@@ -24,7 +24,7 @@ abstract class H5Node extends H5NodeSeq {
   def descendant: List[H5Node] =
     child.toList.flatMap { x => x :: x.descendant }
 
-  def descendant_or_self: List[H5Node] = this :: descendant
+  def descendantOrSelf: List[H5Node] = this :: descendant
 
   override def canEqual(other: Any) = other match {
     case x: H5Group => false
