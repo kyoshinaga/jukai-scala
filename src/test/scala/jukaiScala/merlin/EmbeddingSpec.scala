@@ -10,9 +10,9 @@ class EmbeddingSpec extends FlatSpec with Matchers{
 
   "convert" should "can looking up and return matrix" in {
     val embed = Embedding(100, 4)
-    val sampleData = DenseMatrix(Array[Double](2,3,4))
+    val sampleData = DenseMatrix(Array[Float](2,3,4))
     println(sampleData)
-    println(embed.getFunctorName())
+    println(embed.functorName)
     println(embed.w(2))
     println(embed.w(3))
     println(embed.w(4))

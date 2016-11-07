@@ -12,8 +12,8 @@ class JukaiNLP {
 object JukaiNLP {
   def main(args: Array[String]): Unit = {
     println("hello")
-    val fid = H5Util.openFile("./target/test-classes/data/tokenizer_test.h5")
+    //val fid = H5Util.openFile("./target/test-classes/data/tokenizer_test.h5")
     //val fid = H5Util.openFile(args(0))
-    println(fid)
+    //println(fid)
   }
 }

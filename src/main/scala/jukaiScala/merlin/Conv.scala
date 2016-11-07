@@ -24,11 +24,11 @@ class Conv(filterRow: Int, filterCol:Int,
   private val padding = (paddingRow, paddingCol)
 
   def h5load(data: H5Node): Unit = {
-    for(outc <- 0 until data.dims(0).asInstanceOf[Long].toInt)
-      for(inc <- 0 until data.dims(1).asInstanceOf[Long].toInt)
-        for(y <- 0 until data.dims(3).asInstanceOf[Long].toInt)
-          for(x <- 0 until data.dims(2).asInstanceOf[Long].toInt)
-            (w(inc)(outc))(y,x) = data(outc, inc, x, y).asInstanceOf[Float]
+    for(outc <- 0 until data.dims.head.toInt)
+      for(inc <- 0 until data.dims(1).toInt)
+        for(y <- 0 until data.dims(3).toInt)
+          for(x <- 0 until data.dims(2).toInt)
+            w(inc)(outc)(y,x) = data(outc, inc, x, y).asInstanceOf[Float]
   }
 
   override final def convert(data: DenseMatrix[Float]): DenseMatrix[Float] = {
@@ -46,12 +46,21 @@ class Conv(filterRow: Int, filterCol:Int,
 
     val work = im2col(data, outdims)
 
+//    println(w(0)(0))
+//    println(work(0,::))
+//    println(ws2col(::,0))
+//    var tempVal = 0.0
+//    for (i <- 0 until 144){
+//      tempVal += work(0,i) * ws2col(i,0)
+//      println("%d-th val: %f = %f * %f".format(i,tempVal, work(0,i),ws2col(i,0)))
+//    }
+
     work * ws2col
   }
 
   def im2col(x: DenseMatrix[Float], outdims: Array[Int]): DenseMatrix[Float] = {
     val filterSize = filterRow * filterCol
-    val work = DenseMatrix.zeros[Float](outdims.fold(1)((z,n) => z * n), filterSize)
+    val work = DenseMatrix.zeros[Float](outdims.product, filterSize)
 
     val x1 = x.rows
     val x2 = x.cols

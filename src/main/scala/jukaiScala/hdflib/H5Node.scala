@@ -39,7 +39,7 @@ abstract class H5Node extends H5NodeSeq {
     case x: H5Node =>
       (label == x.label) &&
         (dataType == x.dataType) &&
-        (nonEmptyChildren sameElements x.nonEmptyChildren)
+        nonEmptyChildren == x.nonEmptyChildren
     case _ =>
       false
   }
@@ -55,22 +55,22 @@ abstract class H5Node extends H5NodeSeq {
   def dims: Seq[_ <: Long]
 
   def apply(y: Int, x: Int) = {
-    if (data != Nil && ndim == 2 && y < dims(0) && x < dims(1))
+    if (data != Nil && ndim == 2 && y < dims.head && x < dims(1))
       data(y * dims(1).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
   }
 
   def apply(z: Int, y: Int, x: Int) = {
-    if (data != Nil && ndim == 3 && z < dims(0) && y < dims(1) && x < dims(2))
-      data((z * dims(2).toInt + y) * dims(1).toInt + x)
+    if (data != Nil && ndim == 3 && z < dims.head && y < dims(1) && x < dims(2))
+      data((z * dims(1).toInt + y) * dims(2).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
   }
 
   def apply(i: Int, z: Int, y: Int, x: Int) = {
-    if (data != Nil && ndim == 4 && i < dims(0) && z < dims(1) && y < dims(2) && x < dims(3))
-      data(((i * dims(3).toInt + z) * dims(2).toInt + y) * dims(1).toInt + x)
+    if (data != Nil && ndim == 4 && i < dims.head && z < dims(1) && y < dims(2) && x < dims(3))
+      data(((i * dims(1).toInt + z) * dims(2).toInt + y) * dims(3).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
   }
