@@ -1,5 +1,7 @@
 package jukaiScala.merlin
 
+import java.util.Properties
+
 import breeze.linalg.DenseMatrix
 
 /**
@@ -12,3 +14,4 @@ trait Functor {
   def convert(data: DenseMatrix[Float]): DenseMatrix[Float]
 
 }
+

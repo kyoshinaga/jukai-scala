@@ -6,15 +6,15 @@ import jukaiScala.hdflib.H5Node
 /**
   * Created by ubuntu on 10/17/16.
   */
-class Linear(indim: Int, outdim: Int) extends Functor{
+class Linear private(indim: Int, outdim: Int) extends Functor{
   override def functorName: String = "Linear"
 
-  val w = DenseMatrix.zeros[Float](indim, outdim)
+  private val w = DenseMatrix.zeros[Float](indim, outdim)
 
-  val b = DenseVector.zeros[Float](outdim)
+  private val b = DenseVector.zeros[Float](outdim)
 
-  def h5load(W: H5Node, B: H5Node):Unit ={
-    for(y <- 0 until W.dims(0).toInt)
+  protected def h5load(W: H5Node, B: H5Node):Unit ={
+    for(y <- 0 until W.dims.head.toInt)
       for(x <- 0 until W.dims(1).toInt) {
         w(y, x) = W(y, x).asInstanceOf[Float]
         if (y == 0){
@@ -25,7 +25,7 @@ class Linear(indim: Int, outdim: Int) extends Functor{
 
   override final def convert(x:DenseMatrix[Float]) = {
     val z = w.t * x
-    for (i <- 0 until outdim){
+    for (i <- 0 until x.cols){
       z(::,i) := z(::,i) + b
     }
     z
@@ -35,5 +35,13 @@ class Linear(indim: Int, outdim: Int) extends Functor{
 object Linear {
 
   def apply(indim:Int, outdim:Int) = new Linear(indim, outdim)
+
+  def apply(h5node: H5Node): Linear = {
+    val b = h5node.child(1)
+    val w = h5node.child(2)
+    val ls = new Linear(w.dims.head.toInt, w.dims(1).toInt)
+    ls.h5load(w, b)
+    ls
+  }
 
 }

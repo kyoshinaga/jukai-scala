@@ -1,6 +1,7 @@
 package jukaiScala.hdflib
 
 import sun.text.normalizer.Utility
+import scala.math.Ordering.Implicits._
 
 /**
   * Created by kenta-yoshinaga on 2016/10/28.
@@ -18,6 +19,8 @@ abstract class H5Node extends H5NodeSeq {
   def dataType: String
 
   def child: Seq[H5Node]
+
+  def hasChild: Boolean = child.nonEmpty
 
   def nonEmptyChildren: Seq[H5Node] = child filterNot (_.toString == "")
 
@@ -55,21 +58,21 @@ abstract class H5Node extends H5NodeSeq {
   def dims: Seq[_ <: Long]
 
   def apply(y: Int, x: Int) = {
-    if (data != Nil && ndim == 2 && y < dims.head && x < dims(1))
+    if (data != Nil && ndim == 2 && (y,x) >= (0,0) && y < dims.head && x < dims(1))
       data(y * dims(1).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
   }
 
   def apply(z: Int, y: Int, x: Int) = {
-    if (data != Nil && ndim == 3 && z < dims.head && y < dims(1) && x < dims(2))
+    if (data != Nil && ndim == 3 && (z,y,x) >= (0,0,0) && z < dims.head && y < dims(1) && x < dims(2))
       data((z * dims(1).toInt + y) * dims(2).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
   }
 
   def apply(i: Int, z: Int, y: Int, x: Int) = {
-    if (data != Nil && ndim == 4 && i < dims.head && z < dims(1) && y < dims(2) && x < dims(3))
+    if (data != Nil && ndim == 4 && i < dims.head && (i,z,y,x) >= (0,0,0,0) && z < dims(1) && y < dims(2) && x < dims(3))
       data(((i * dims(1).toInt + z) * dims(2).toInt + y) * dims(3).toInt + x)
     else
       throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")

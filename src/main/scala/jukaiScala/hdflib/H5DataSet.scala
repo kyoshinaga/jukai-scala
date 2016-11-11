@@ -49,25 +49,4 @@ class H5DataSet[+A] (val data: Seq[A],
 
   override def text: String = data.toString
 
-//  def apply(y: Int, x: Int) = {
-//    if (ndim == 2 && y < dims(1) && x < dims(0))
-//      data(y * dims(1).toInt + x)
-//    else
-//      throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
-//  }
-//
-//  def apply(z: Int, y: Int, x: Int) = {
-//    if (ndim == 3 && z < dims(2) && y < dims(1) && x < dims(0))
-//      data((z * dims(2).toInt + y) * dims(1).toInt + x)
-//    else
-//      throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
-//  }
-//
-//  def apply(i: Int, z: Int, y: Int, x: Int) = {
-//    if (ndim == 4 && i < dims(3) && z < dims(2) && y < dims(1) && x < dims(0))
-//      data(((i * dims(3).toInt + z) * dims(2).toInt + y) * dims(1).toInt + x)
-//    else
-//      throw new IllegalArgumentException("cannot access to data of " + getClass.getSimpleName + " with invalid arguments.")
-//  }
-
 }

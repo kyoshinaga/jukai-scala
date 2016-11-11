@@ -31,12 +31,17 @@ class H5Elem(val label: String,
 
   override def text: String = (child map ( _.text)).mkString
 
-  def hasChild: Boolean = (child.length > 0)
-
-  override def data = null
+  override def data = Nil
 
   override def ndim: Int = -1
 
-  override def dims: Seq[_ <: Long] = Nil
+  override def dims: Seq[_ <: Long] = Seq(data.length)
+
+  def copy(label: String = this.label,
+           dataType: String = this.dataType,
+           minimizeEmpty: Boolean = this.minimizeEmpty,
+           child: Seq[H5Node] = this.child): H5Elem =
+    H5Elem(label,dataType,minimizeEmpty,child: _*)
+
 }
 

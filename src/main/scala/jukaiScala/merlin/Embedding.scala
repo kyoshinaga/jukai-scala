@@ -7,15 +7,15 @@ import jukaiScala.hdflib.H5Node
 /**
   * Created by kenta-yoshinaga on 2016/08/30.
   */
-class Embedding private(val indim: Int, val outdim: Int) extends Functor{
+class Embedding private(val vocabulary: Int, val outdim: Int) extends Functor{
 
   override def functorName: String = "Embedding"
 
-  val w = new Array[DenseVector[Float]](indim).map(_ => DenseVector.zeros[Float](outdim))
+  private val w = new Array[DenseVector[Float]](vocabulary).map(_ => DenseVector.zeros[Float](outdim))
 
-  def h5load(data: H5Node): Unit = {
-    for(y <- 0 until data.dims(0).asInstanceOf[Long].toInt)
-      for(x <- 0 until data.dims(1).asInstanceOf[Long].toInt)
+  protected def h5load(data: H5Node): Unit = {
+    for(y <- 0 until data.dims.head.toInt)
+      for(x <- 0 until data.dims(1).toInt)
         w(y)(x) = data(y,x).asInstanceOf[Float]
   }
 
@@ -30,10 +30,16 @@ class Embedding private(val indim: Int, val outdim: Int) extends Functor{
   }
 }
 
-object Embedding{
+object Embedding {
 
-  def apply(indim:Int, outdim: Int):Embedding = new Embedding(indim, outdim)
+  def apply(vocabulary:Int, outdim: Int):Embedding = new Embedding(vocabulary, outdim)
 
-  def unapply(e: Embedding) = Option((e.indim, e.outdim))
+  def apply(h5node: H5Node): Embedding = {
+    val emb = new Embedding(h5node.child(1).dims.head.toInt, h5node.child(1).dims(1).toInt)
+    emb.h5load(h5node.child(1))
+    emb
+  }
+
+  def unapply(e: Embedding) = Option((e. vocabulary, e.outdim))
 }
 

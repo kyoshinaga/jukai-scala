@@ -6,15 +6,14 @@ import jukaiScala.hdflib.H5Node
 /**
   * Created by ubuntu on 10/17/16.
   */
-class Conv(filterRow: Int, filterCol:Int,
+class Conv private (filterRow: Int, filterCol:Int,
            inCh: Int, outCh: Int,
            strideRow: Int, strideCol: Int,
            paddingRow: Int, paddingCol: Int) extends Functor{
   override def functorName: String = "Conv"
 
-  val w = Array.ofDim[DenseMatrix[Float]](inCh, outCh).map(
+  private val w = Array.ofDim[DenseMatrix[Float]](inCh, outCh).map(
     _.map(
-      //_ => {DenseMatrix.rand[Float](filterRow, filterCol) :+= -0.5}
       _ => {DenseMatrix.zeros[Float](filterRow, filterCol)}
     )
   )
@@ -23,7 +22,9 @@ class Conv(filterRow: Int, filterCol:Int,
   private val stride = (strideRow, strideCol)
   private val padding = (paddingRow, paddingCol)
 
-  def h5load(data: H5Node): Unit = {
+  def getW = w
+
+  protected def h5load(data: H5Node): Unit = {
     for(outc <- 0 until data.dims.head.toInt)
       for(inc <- 0 until data.dims(1).toInt)
         for(y <- 0 until data.dims(3).toInt)
@@ -46,19 +47,10 @@ class Conv(filterRow: Int, filterCol:Int,
 
     val work = im2col(data, outdims)
 
-//    println(w(0)(0))
-//    println(work(0,::))
-//    println(ws2col(::,0))
-//    var tempVal = 0.0
-//    for (i <- 0 until 144){
-//      tempVal += work(0,i) * ws2col(i,0)
-//      println("%d-th val: %f = %f * %f".format(i,tempVal, work(0,i),ws2col(i,0)))
-//    }
-
     work * ws2col
   }
 
-  def im2col(x: DenseMatrix[Float], outdims: Array[Int]): DenseMatrix[Float] = {
+  private def im2col(x: DenseMatrix[Float], outdims: Array[Int]): DenseMatrix[Float] = {
     val filterSize = filterRow * filterCol
     val work = DenseMatrix.zeros[Float](outdims.product, filterSize)
 
@@ -94,7 +86,7 @@ class Conv(filterRow: Int, filterCol:Int,
     work
   }
 
-  def outsize(x: DenseMatrix[Float]): Array[Int] = {
+  private def outsize(x: DenseMatrix[Float]): Array[Int] = {
     val N = 2
     val dims = Array.ofDim[Int](N)
     dims(0) = (x.rows +  2 * paddingRow - filterRow) + strideRow
@@ -108,4 +100,23 @@ object Conv {
             stride: Tuple2[Int,Int], padding: Tuple2[Int, Int]):Conv =
     new Conv(filter._1, filter._2, ch._1, ch._2, stride._1, stride._2,
       padding._1, padding._2)
+
+  def apply(h5node: H5Node): Conv = {
+    val filterDims = h5node.child(1)
+    val paddims = h5node.child(2)
+    val stride = h5node.child(3)
+    val w = h5node.child(4)
+    val conv = Conv(
+      (filterDims.child(1).data.head.asInstanceOf[Int],
+        filterDims.child(2).data.head.asInstanceOf[Int]),
+      (w.child(1).dims(1).toInt,
+        w.child(1).dims.head.toInt),
+      (stride.child(1).data.head.asInstanceOf[Int],
+        stride.child(2).data.head.asInstanceOf[Int]),
+      (paddims.child(1).data.head.asInstanceOf[Int],
+        paddims.child(2).data.head.asInstanceOf[Int])
+    )
+    conv.h5load(w.child(1))
+    conv
+  }
 }
