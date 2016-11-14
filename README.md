@@ -12,7 +12,8 @@ function Tokenizer()
     T = Float32
     embed = Embedding(T, 100, 10)
     conv = Conv(T, (10,7,), (1,100), paddims=(0,3)
-    ls = Linear(T, 100, 4)
+    ls = Linear(T, 100, 10)
+    ls2 = Linear(T, 10, 3)
     g = @graph begin
         chars = identity(:chars)
         x = Var(reshape(chars, 1, length(chars)))
@@ -22,20 +23,18 @@ function Tokenizer()
         x = transpose(x)
         x = relu(x)
         x = ls(x)
+        x = ls2(x)
         x
     end
     Tokenizer(dict, IOE(), g)
 end
 ```
 
-### Training
+### Requirement
+- HDF5 Library.
 
-```julia
-t = Tokenizer()
-
-data = readconll(PATH_TO_TRAIN_DATA, [2, 11])
-train(t, 100, data)
-
-str = "Test"
-result = t(str)
+### Usage
+```bash
+java -Djava.library.path=/path/to/hdf5library -cp "./target/*" jukaiScala.main.JukaiNLP INPUT_MODEL_FILE"
 ```
+
