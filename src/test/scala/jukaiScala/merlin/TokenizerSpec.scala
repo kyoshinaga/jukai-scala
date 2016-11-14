@@ -12,15 +12,14 @@ class TokenizerSpec extends FlatSpec with Matchers {
 
   "Tokenizer" should "annotated string" in {
 
-    val testString = "否定した。"
-    val goldStringList = List("否定","した","。")
+    val testString = "上海ガニをばくばく食べる。"
+    val goldStringList = List("上海","ガニ","を","ばくばく","食べる","。")
 
     val filePath = "./target/test-classes/data/tokenizer_test.h5"
-    val model = H5Util.loadData(filePath)
 
-    val t = Tokenizer(model)
+    val t = Tokenizer(filePath)
 
-    val testStringList = t.tokenize(testString).split(" ").toList
+    val testStringList = t.tokenize(testString).split("\n").toList
 
     (testStringList zip goldStringList).forall(x => x._1 == x._2) should be (true)
   }

@@ -10,7 +10,7 @@ import jukaiScala.hdflib._
 import scala.collection.mutable
 import scala.collection.mutable.{ListBuffer, Map}
 
-class Tokenizer (val model: H5Node){
+class Tokenizer (val model: H5Node, val fid: Int){
 
   if(model == null)
     throw new IllegalArgumentException("cannot construct " + getClass.getSimpleName + " with null")
@@ -43,7 +43,7 @@ class Tokenizer (val model: H5Node){
     val outputData = callFunctors(decode(str), functors)
     val tags = classification(outputData)
     val decodedString = decode(tags)
-    decodedString.map(x => str.substring(x._1, x._2)).mkString(" ")
+    decodedString.map(x => str.substring(x._1, x._2)).mkString("\n")
   }
 
   def decode(str: String) : DenseMatrix[Float] = {
@@ -53,15 +53,22 @@ class Tokenizer (val model: H5Node){
   }
 
   def decode(tags: List[Int]): List[(Int, Int)] = {
-    var bpos = 0
+    var bpos = -1
     val ranges = ListBuffer[(Int,Int)]()
     for (i <- tags.indices){
       tagset(tags(i)) match {
-        case "I" => bpos = i
+        case "I" =>
+          if (bpos == -1)
+            bpos = i
         case "E" =>
-          ranges += ((bpos,i+1))
-          bpos = i + 1
-        case "O" => ranges += ((i, i+1))
+          if (bpos == -1)
+            ranges += ((i,i+1))
+          else
+            ranges += ((bpos,i+1))
+          bpos = -1
+        case "O" =>
+          ranges += ((i, i+1))
+          bpos = -1
       }
     }
     ranges.toList
@@ -80,8 +87,16 @@ class Tokenizer (val model: H5Node){
       callFunctors(interOutput, tail)
     case Nil => input
   }
+
+  def close(): Unit = H5Util.closeFile(fid)
 }
 
 object Tokenizer {
-  def apply(model: H5Node): Tokenizer = new Tokenizer(model)
+//  def apply(model: H5Node): Tokenizer = new Tokenizer(model)
+
+  def apply(path: String) : Tokenizer = {
+    val fid = H5Util.openFile(path)
+    val model = H5Util.loadData(fid)
+    new Tokenizer(model,fid)
+  }
 }

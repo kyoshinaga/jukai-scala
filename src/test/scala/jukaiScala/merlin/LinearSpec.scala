@@ -24,15 +24,15 @@ class LinearSpec extends FlatSpec with Matchers{
     val conv = Conv(cvModel)
     val ls = Linear(lsModel)
 
-    val inputData = DenseMatrix(Array(0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0).map(x=>x.toFloat))
+    val inputData = DenseMatrix((0 until 20).toArray.map(_.toFloat))
 
     val convertedData = ls.convert(Transpose(conv.convert(embedding.convert(inputData))))
 
     val goldData = H5Util.loadData(lsConvertFile).child.head.child(1)
 
-    val goldMatrix = DenseMatrix.zeros[Float](3,10)
+    val goldMatrix = DenseMatrix.zeros[Float](3,20)
     for (y <- 0 until 3)
-      for (x <- 0 until 10)
+      for (x <- 0 until 20)
         goldMatrix(y, x) = goldData(x, y).asInstanceOf[Float]
 
     val diff = abs(convertedData - goldMatrix).forall(x => x < 1e-5)

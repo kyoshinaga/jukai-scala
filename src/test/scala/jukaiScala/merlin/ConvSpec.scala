@@ -22,12 +22,12 @@ class ConvSpec extends FlatSpec with Matchers{
     val embedding = Embedding(embModel)
     val conv = Conv(cvModel)
 
-    val inputData = DenseMatrix(Array(0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0).map(x=>x.toFloat))
+    val inputData = DenseMatrix((0 until 20).toArray.map(_.toFloat))
 
     val convertedData = conv.convert(embedding.convert(inputData))
 
-    val goldMatrix = DenseMatrix.zeros[Float](10,4)
-    for (y <- 0 until 10)
+    val goldMatrix = DenseMatrix.zeros[Float](20,4)
+    for (y <- 0 until 20)
       for (x <- 0 until 4)
         goldMatrix(y, x) = goldData(x, y).asInstanceOf[Float]
 

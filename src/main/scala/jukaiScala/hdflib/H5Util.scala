@@ -22,14 +22,21 @@ object H5Util {
     rootElem
   }
 
+  def loadData(fid: Int): H5Node = {
+//    val fid = openFile(filePath)
+    val nameList = getNameTypeList(fid, fid, "/")
+    val elemSeq = nameList.map(x => recursiveLoad(fid,x._1,x._2))
+    val rootElem = H5Elem("ROOT", "Root", elemSeq: _*)
+    rootElem
+  }
+
   private def recursiveLoad(locid: Int, name: String, dataType: Int): H5Node = dataType match{
-    case HDF5Constants.H5O_TYPE_GROUP => {
+    case HDF5Constants.H5O_TYPE_GROUP =>
       val gid = H5.H5Gopen(locid, name, HDF5Constants.H5P_DEFAULT)
       val gnameList = getNameTypeList(locid, gid, name)
       val elemSeq = gnameList.map(x => recursiveLoad(gid, x._1, x._2))
       H5Elem(name,"Group", elemSeq: _*)
-    }
-    case HDF5Constants.H5O_TYPE_DATASET => {
+    case HDF5Constants.H5O_TYPE_DATASET =>
       val did = H5.H5Dopen(locid, name, HDF5Constants.H5P_DEFAULT)
       val dsid = H5.H5Dget_space(did)
       val ndim = H5.H5Sget_simple_extent_ndims(dsid)
@@ -40,11 +47,9 @@ object H5Util {
         H5DataSet(data, name)
       else
         H5DataSet(data, name, ndim, dims)
-    }
   }
 
-  // File
-  private def openFile(filePath:String): Int = {
+  def openFile(filePath:String): Int = {
     H5.H5Fopen(filePath, HDF5Constants.H5F_ACC_RDONLY,HDF5Constants.H5P_DEFAULT)
   }
 
@@ -58,26 +63,22 @@ object H5Util {
     val size = H5.H5Tget_size(tid)
 
     H5.H5Tget_class(tid) match {
-      case HDF5Constants.H5T_INTEGER => {
+      case HDF5Constants.H5T_INTEGER =>
         val buff = new Array[Long](npoints.toInt)
         H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff.map(_.toInt)
-      }
-      case HDF5Constants.H5T_FLOAT => {
+      case HDF5Constants.H5T_FLOAT =>
         val buff = new Array[Float](npoints.toInt)
         H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff
-      }
-      case HDF5Constants.H5T_STRING if npoints == 1=> {
+      case HDF5Constants.H5T_STRING if npoints == 1=>
         val buff =  new Array[String](npoints.toInt)
         H5.H5Dread_string(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff
-      }
-      case HDF5Constants.H5T_STRING => {
+      case HDF5Constants.H5T_STRING =>
         val buff =  new Array[AnyRef](npoints.toInt)
         H5.H5DreadVL(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff.map(_.toString)
-      }
     }
   }
 

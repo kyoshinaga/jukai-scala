@@ -12,25 +12,27 @@ import jukaiScala.merlin.{Functor, Tokenizer}
 import jukaiScala.merlin._
 
 class JukaiNLP(val t: Tokenizer) {
+  var file = "hoge"
 
-/*  def openStandardIn: BufferedReader = bufReader(System.in)
+  def openStandardIn: BufferedReader = bufReader(System.in)
 
-  def bufReader(stream: InputStream) = new BufferedReader((new InputStreamReader(stream)))
+  def bufReader(stream: InputStream) = new BufferedReader(new InputStreamReader(stream))
 
-  def run = {
+  def run() = {
     val reader = openStandardIn
 
     reader.ready() match {
       case false => shell(reader)
+      case true =>
     }
   }
 
-  private[thid] def shell(reader: BufferedReader) = {
+  private[this] def shell(reader: BufferedReader) = {
     def readLine: String = {
       System.err.print("> ")
       reader.readLine match {
         case null => ""
-        case l if l.trim().size == 0 => readLine
+        case l if l.trim().isEmpty => readLine
         case l => l
       }
     }
@@ -38,20 +40,22 @@ class JukaiNLP(val t: Tokenizer) {
     var in = readLine
     while (in != "") {
       val tokenizedStr = t.tokenize(in)
+      println(tokenizedStr)
+      in = readLine
     }
+  }
 
-  }*/
+  def close() = t.close()
 }
 
 object JukaiNLP {
   def main(args: Array[String]): Unit = {
     val filePath = args(0)
-    val model = H5Util.loadData(filePath)
-    val t = Tokenizer(model)
-    val outputs = t.tokenize(args(1))
-    println("Input String:")
-    println(args(1))
-    println("Tokenized:")
-    println(outputs)
+    val t = Tokenizer(filePath)
+
+    val jukaiNLPTokenize = new JukaiNLP(t)
+    try {
+      jukaiNLPTokenize.run()
+    }finally jukaiNLPTokenize.close()
   }
 }
