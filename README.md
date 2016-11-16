@@ -1,7 +1,7 @@
-# scala-jld
-Workspace to implement a method to support JLD input for scala.
+# Jukai-scala
+Tokenizer module implemented in scala.
 
-## Tokenizer@JukaiNLP
+## Tokenizer@JukainLP
 
 ### Construction
 Tokenizer of [`JukaiNLP`](https://github.com/hshindo/JukaiNLP.jl.git). 

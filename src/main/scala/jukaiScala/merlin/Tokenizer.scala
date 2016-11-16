@@ -15,7 +15,7 @@ class Tokenizer (val model: H5Node, val fid: Int){
   if(model == null)
     throw new IllegalArgumentException("cannot construct " + getClass.getSimpleName + " with null")
 
-  val functors = Graph.constructGraph(model)
+  private val functors = Graph.constructGraph(model)
 
   class iddict(val dict: H5Node){
     val id2count = dict.child(1).data
@@ -29,9 +29,9 @@ class Tokenizer (val model: H5Node, val fid: Int){
     }
   }
 
-  val dict = new this.iddict(model.child.head.child(1))
+  private val dict = new this.iddict(model.child.head.child(1))
 
-  val tagset: mutable.Map[Int, String] = {
+  private val tagset: mutable.Map[Int, String] = {
     val mappingId = mutable.Map[Int,String]()
     for(c <- model.child.head.child(3).child.filterNot(_.label == "#TYPE")){
       mappingId(c.data.head.asInstanceOf[Int] - 1) = c.label
@@ -42,17 +42,25 @@ class Tokenizer (val model: H5Node, val fid: Int){
   def tokenize(str: String) : String = {
     val outputData = callFunctors(decode(str), functors)
     val tags = classification(outputData)
-    val decodedString = decode(tags)
-    decodedString.map(x => str.substring(x._1, x._2)).mkString("\n")
+    val ranges = decode(tags)
+    ranges.map(x => str.substring(x._1, x._2)).mkString("\n")
   }
 
-  def decode(str: String) : DenseMatrix[Float] = {
+  def tokenizeWithRanges(str: String) : List[(String, (Int, Int))] = {
+    val outputData = callFunctors(decode(str), functors)
+    val tags = classification(outputData)
+    val ranges = decode(tags)
+    val words = ranges.map(x => str.substring(x._1, x._2))
+    words zip ranges
+  }
+
+  private def decode(str: String) : DenseMatrix[Float] = {
     val strArray = str.toCharArray.map(x => dict.key2id.getOrElse(x.toString, 1) - 1.0.toFloat)
     val inputData = DenseMatrix(strArray)
     inputData
   }
 
-  def decode(tags: List[Int]): List[(Int, Int)] = {
+  private def decode(tags: List[Int]): List[(Int, Int)] = {
     var bpos = -1
     val ranges = ListBuffer[(Int,Int)]()
     for (i <- tags.indices){
@@ -74,7 +82,7 @@ class Tokenizer (val model: H5Node, val fid: Int){
     ranges.toList
   }
 
-  def classification(x: DenseMatrix[Float]): List[Int] = {
+  private def classification(x: DenseMatrix[Float]): List[Int] = {
     for {
       i <- 0 until x.cols
       maxI = argmax(x(::,i))
