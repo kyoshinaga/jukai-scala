@@ -1,4 +1,5 @@
 package jukaiScala.merlin
+
 import breeze.linalg.DenseMatrix
 import breeze.stats.distributions.Rand
 import jukaiScala.hdflib.H5Node
@@ -96,8 +97,8 @@ class Conv private (filterRow: Int, filterCol:Int,
 }
 
 object Conv {
-  def apply(filter: Tuple2[Int,Int], ch: Tuple2[Int,Int],
-            stride: Tuple2[Int,Int], padding: Tuple2[Int, Int]):Conv =
+  def apply(filter: (Int,Int), ch: (Int,Int),
+            stride: (Int,Int), padding: (Int,Int)):Conv =
     new Conv(filter._1, filter._2, ch._1, ch._2, stride._1, stride._2,
       padding._1, padding._2)
 

@@ -19,7 +19,7 @@ class ConvSpec extends FlatSpec with Matchers{
     val cvModel = H5Util.loadData(cvFile).child.head
     val goldData = H5Util.loadData(cvConvertFile).child.head.child(1)
 
-    val embedding = Embedding(embModel)
+    val embedding = Lookup(embModel)
     val conv = Conv(cvModel)
 
     val inputData = DenseMatrix((0 until 20).toArray.map(_.toFloat))

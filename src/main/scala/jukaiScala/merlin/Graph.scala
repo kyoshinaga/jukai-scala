@@ -44,7 +44,7 @@ object Graph {
         case _ => None
       }
     case x:H5Node => x.child.head.data.head.toString match {
-      case "Merlin.Embedding" => Some(Embedding(x))
+      case "Merlin.Embedding" => Some(Lookup(x))
       case "Merlin.Conv{2}" => Some(Conv(x))
       case "Merlin.Linear" => Some(Linear(x))
       case _ => None

@@ -14,7 +14,7 @@ class EmbeddingSpec extends FlatSpec with Matchers{
   "Embedding.convert" should "match gold matrix of model file" in {
     val filePath = "./target/test-classes/data/tokenizer_test_embedding.h5"
     val model = H5Util.loadData(filePath).child.head
-    val embedding = Embedding(model)
+    val embedding = Lookup(model)
     val inputData = DenseMatrix((0 until 20).toArray.map(_.toFloat))
 
     val convertedData = embedding.convert(inputData)

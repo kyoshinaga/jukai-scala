@@ -17,7 +17,7 @@ object H5Util {
   def loadData(filePath: String): H5Node = {
     val fid = openFile(filePath)
     val nameList = getNameTypeList(fid, fid, "/")
-    val elemSeq = nameList.map(x => recursiveLoad(fid,x._1,x._2))
+    val elemSeq = nameList.map(x => recursiveLoad(fid, x._1, x._2))
     val rootElem = H5Elem("ROOT", "Root", elemSeq: _*)
     rootElem
   }
@@ -71,7 +71,7 @@ object H5Util {
         val buff = new Array[Float](npoints.toInt)
         H5.H5Dread(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff
-      case HDF5Constants.H5T_STRING if npoints == 1=>
+      case HDF5Constants.H5T_STRING if npoints == 1 =>
         val buff =  new Array[String](npoints.toInt)
         H5.H5Dread_string(did, tid, dsid, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buff)
         buff
@@ -84,6 +84,15 @@ object H5Util {
 
   private def getNameTypeList(fid:Int, locid:Int, rootName: String): List[(String, Int)] = {
     val gInfo = H5.H5Gget_info(locid)
+
+//    val nattr = H5.H5Oget_info_by_name(locid, rootName, HDF5Constants.H5P_DEFAULT)//.num_attrs.toInt
+//    val anameList = for {
+//      i <- 0 until nattr
+//      aname = H5.H5Aget_name_by_idx(fid, rootName, HDF5Constants.H5_INDEX_NAME,
+//        HDF5Constants.H5_ITER_INC, i, HDF5Constants.H5P_DEFAULT)
+//      oi = H5.H5Oget_info
+//    }
+
     val nlink = gInfo.nlinks.toInt
     val gnameList = for {
       i <- 0 until nlink

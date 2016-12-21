@@ -7,7 +7,7 @@ import jukaiScala.hdflib.H5Node
 /**
   * Created by kenta-yoshinaga on 2016/08/30.
   */
-class Embedding private(val vocabulary: Int, val outdim: Int) extends Functor{
+class Lookup private(val vocabulary: Int, val outdim: Int) extends Functor{
 
   override def functorName: String = "Embedding"
 
@@ -30,16 +30,16 @@ class Embedding private(val vocabulary: Int, val outdim: Int) extends Functor{
   }
 }
 
-object Embedding {
+object Lookup {
 
-  def apply(vocabulary:Int, outdim: Int):Embedding = new Embedding(vocabulary, outdim)
+  def apply(vocabulary:Int, outdim: Int):Lookup = new Lookup(vocabulary, outdim)
 
-  def apply(h5node: H5Node): Embedding = {
-    val emb = new Embedding(h5node.child(1).dims.head.toInt, h5node.child(1).dims(1).toInt)
+  def apply(h5node: H5Node): Lookup = {
+    val emb = new Lookup(h5node.child(1).dims.head.toInt, h5node.child(1).dims(1).toInt)
     emb.h5load(h5node.child(1))
     emb
   }
 
-  def unapply(e: Embedding) = Option((e. vocabulary, e.outdim))
+  def unapply(e: Lookup) = Option((e. vocabulary, e.outdim))
 }
 

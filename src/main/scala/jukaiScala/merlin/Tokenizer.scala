@@ -75,6 +75,8 @@ class Tokenizer (val model: H5Node, val fid: Int){
             ranges += ((bpos,i+1))
           bpos = -1
         case "O" =>
+          if (bpos != -1)
+            ranges += ((bpos, i))
           ranges += ((i, i+1))
           bpos = -1
       }

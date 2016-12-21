@@ -20,7 +20,7 @@ class LinearSpec extends FlatSpec with Matchers{
     val cvModel = H5Util.loadData(cvFile).child.head
     val lsModel = H5Util.loadData(lsFile).child.head
 
-    val embedding = Embedding(embModel)
+    val embedding = Lookup(embModel)
     val conv = Conv(cvModel)
     val ls = Linear(lsModel)
 
