@@ -28,5 +28,7 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.12",
   "org.scalanlp" %% "breeze-natives" % "0.12",
   "org.scalanlp" %% "breeze-viz" % "0.12",
-  "org.hdfgroup" % "hdf-java" % "2.6.1"
+  "edu.ucar" % "cdm" % "4.5.5" exclude("commons-logging", "commons-logging"),
+  "edu.ucar" % "grib" % "4.5.5" exclude("commons-logging", "commons-logging"),
+  "edu.ucar" % "netcdf4" % "4.5.5" exclude("commons-logging", "commons-logging")
 )
