@@ -39,6 +39,16 @@ class kerasSpec extends FlatSpec with Matchers {
 
     println(childGroups.getAttributes())
 
+    val denseGroup = childGroups.findGroup("dense_15")
+
+    val denseWeight = denseGroup.findVariable("dense_15_W:0").read()
+    val denseWeightIndex = denseWeight.getIndex()
+
+    denseWeightIndex.set(1,0)
+
+    println(denseGroup.getNameAndAttributes())
+    println(denseWeight.getFloat(denseWeightIndex))
+
     val modelConfig = rootAttributes.get(1).getValues().getObject(0)
 
     val jsonValue = parse(modelConfig.toString())
