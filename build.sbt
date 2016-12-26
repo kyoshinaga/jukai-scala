@@ -29,7 +29,5 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze-natives" % "0.12",
   "org.scalanlp" %% "breeze-viz" % "0.12",
   "edu.ucar" % "cdm" % "4.5.5" exclude("commons-logging", "commons-logging"),
-  "edu.ucar" % "grib" % "4.5.5" exclude("commons-logging", "commons-logging"),
-  "edu.ucar" % "netcdf4" % "4.5.5" exclude("commons-logging", "commons-logging"),
-  "log4j" % "log4j" % "1.2.14"
+  "org.json4s" %% "json4s-jackson" % "3.3.0"
 )
