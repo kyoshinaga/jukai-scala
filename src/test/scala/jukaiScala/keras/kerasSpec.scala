@@ -19,6 +19,8 @@ class kerasSpec extends FlatSpec with Matchers {
 
     val dataFile = NetcdfFile.open(filePath, null)
 
+    println(dataFile)
+
     1 should be (1)
   }
 }
