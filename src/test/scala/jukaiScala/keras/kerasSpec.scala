@@ -35,28 +35,43 @@ class kerasSpec extends FlatSpec with Matchers {
       println("Merlin")
     }
 
-    val modelConfig = rootAttributes.get(1).getValues().getObject(0)
+    val modelConfig = rootAttributes.get(1).getValues.getObject(0)
 
-    val jsonValue = parse(modelConfig.toString())
+    val jsonValue = parse(modelConfig.toString)
     implicit val formats = DefaultFormats
     val jsonList = jsonValue.extract[Map[String, Any]]
 
-    val configList = jsonList("config").asInstanceOf[List[Map[String,Any]]]
+    val configList = jsonList("config").asInstanceOf[List[Map[String, Any]]]
+
+    println("Config values")
     println(configList(0)("config"))
     println(configList(1)("config"))
     println(configList(2)("config"))
     println(configList(3)("config"))
     println(configList(4)("config"))
+    println("")
 
-    println(configList(0)("config").asInstanceOf[Map[String,Any]]("name"))
-    println(configList(1)("config").asInstanceOf[Map[String,Any]]("name"))
-    println(configList(2)("config").asInstanceOf[Map[String,Any]]("name"))
-    println(configList(3)("config").asInstanceOf[Map[String,Any]]("name"))
-    println(configList(4)("config").asInstanceOf[Map[String,Any]]("name"))
+    println("Layer name")
+    println(configList(0)("config").asInstanceOf[Map[String, Any]]("name"))
+    println(configList(1)("config").asInstanceOf[Map[String, Any]]("name"))
+    println(configList(2)("config").asInstanceOf[Map[String, Any]]("name"))
+    println(configList(3)("config").asInstanceOf[Map[String, Any]]("name"))
+    println(configList(4)("config").asInstanceOf[Map[String, Any]]("name"))
+    println("")
 
     val weightGroups = rootGroup.findGroup("model_weights")
 
     println(weightGroups.getAttributes)
+
+    val denseFirst = weightGroups.findGroup("dense_12")
+    val denseFirstWeight = denseFirst.findVariable("dense_12_W:0")
+    val denseFirstWeightData = denseFirstWeight.read()
+    val denseFirstIndex = denseFirstWeightData.getIndex
+
+    println(denseFirstWeightData.getFloat(denseFirstIndex.set(0,0)))
+    println(denseFirstWeightData.getFloat(denseFirstIndex.set(0,1)))
+    println(denseFirstWeightData.getFloat(denseFirstIndex.set(0,2)))
+    println(denseFirstWeightData.getFloat(denseFirstIndex.set(0,3)))
 
     1 should be (1)
   }
