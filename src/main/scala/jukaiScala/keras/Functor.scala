@@ -5,6 +5,8 @@ package jukaiScala.keras
   */
 
 import breeze.linalg.{DenseMatrix, DenseVector}
+import ucar.nc2.{Variable, Group}
+
 trait Functor {
 
   def functorName:String

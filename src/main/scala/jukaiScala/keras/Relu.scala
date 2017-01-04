@@ -15,4 +15,6 @@ object Relu extends Functor{
 
   def apply(x: DenseMatrix[Float]) = this.convert(x)
 
+  override def toString: String = functorName
+
 }

@@ -7,8 +7,10 @@ package jukaiScala.keras
 import scala.language.postfixOps
 object Graph {
 
+  /*
   def constructGraph(model: String) : List[Functor] = {
 
   }
+  */
 
 }
