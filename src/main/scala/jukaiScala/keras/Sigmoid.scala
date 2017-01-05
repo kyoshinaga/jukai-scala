@@ -10,7 +10,7 @@ object Sigmoid extends Functor {
 
   override def functorName = "Sigmoid"
 
-  override final def convert(data: DenseMatrix[Float]) = data.map(x => 1 / (1 + exp(-x)))
+  override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = data.map(x => 1 / (1 + exp(-x)))
 
-  def apply(x: DenseMatrix[Float]) = this.convert(x)
+  def apply(x: DenseMatrix[Double]) = this.convert(x)
 }

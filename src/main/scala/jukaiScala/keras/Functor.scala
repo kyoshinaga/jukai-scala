@@ -11,7 +11,7 @@ trait Functor {
 
   def functorName:String
 
-  def convert(data: DenseMatrix[Float]): DenseMatrix[Float]
+  def convert(data: DenseMatrix[Double]): DenseMatrix[Double]
 
   override def toString: String = functorName
 }

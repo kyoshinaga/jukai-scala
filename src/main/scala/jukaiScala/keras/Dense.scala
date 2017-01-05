@@ -8,13 +8,13 @@ import ucar.nc2.Variable
 
 class Dense (inputDim: Int, outputDim: Int) extends Functor {
 
-  private val w = DenseMatrix.zeros[Float](inputDim, outputDim)
+  private val w = DenseMatrix.zeros[Double](inputDim, outputDim)
 
-  private val b = DenseVector.zeros[Float](outputDim)
+  private val b = DenseVector.zeros[Double](outputDim)
 
   override def functorName = "Dense"
 
-  override final def convert(data: DenseMatrix[Float]) = {
+  override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
     val z = w.t * data
     for (i <- 0 until data.cols){
       z(::,i) :+= b

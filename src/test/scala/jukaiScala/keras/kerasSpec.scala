@@ -128,6 +128,7 @@ class kerasSpec extends FlatSpec with Matchers {
             case "softmax" => Softmax
           }
         }
+        case "Convolution1D" => Dense(10,3)
         case "Dense" => {
           val layerName = getConfigs(x)("name")
           val params = weightGroups.findGroup(layerName)
@@ -136,6 +137,7 @@ class kerasSpec extends FlatSpec with Matchers {
           val bias   = params.findVariable(weightNames.getStringValue(1))
           Dense(weight, bias)
         }
+        case "Embedding" => Dense(10, 10)
         case "Flatten" => Flatten
         case _ => Dense(10,2)
       }
@@ -166,15 +168,24 @@ class kerasSpec extends FlatSpec with Matchers {
     println(dimsConv.get(2).getLength) // Input dim
     println(dimsConv.get(3).getLength) // Output Channel
 
-    val conv = Convolution1D(2, 5, 2, padding = true)
+    val conv = Convolution1D(2, 3, 2, padding = true)
+    val conv2 = Convolution1D(3, 1, 2, padding = true)
 
-    val m = DenseMatrix((1.0.toFloat, 2.0.toFloat), (3.0.toFloat, 4.0.toFloat), (5.0.toFloat, 6.0.toFloat))
+    val m = DenseMatrix((1.0, 2.0), (3.0, 4.0), (5.0, 6.0))
+
+    val ww = DenseMatrix((1.0, 2.0), (3.0, 4.0), (5.0, 6.0), (7.0, 8.0), (9.0, 10.0), (11.0, 12.0))
+
+    val www = DenseMatrix((0.1, 0.2, 0.3), (0.4, 0.5, 0.6))
+
+    conv.w := ww
+    conv2.w := www
 
     println(conv.w)
     println(conv.im2col(m))
     println(conv.im2col(m) * conv.w)
 
-    println(conv.toString)
+    println(conv.convert(m))
+    println(conv2.convert(conv.convert(m)))
 
     1 should be (1)
   }

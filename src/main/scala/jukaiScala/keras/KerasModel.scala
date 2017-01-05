@@ -42,22 +42,28 @@ class KerasModel(path:String) {
 
   val modelValues = parseConfigToList(modelAttribute.getValue(0).toString)
 
+  def getConfigs(x: Map[String, Any]): Map[String, String] = x("config").asInstanceOf[Map[ String, String]]
+
   def constructNetwork(values: List[Map[String, Any]]) = values.map(
     x => x("class_name") match{
       case "Activation" => {
-        x("config").asInstanceOf[Map[String, String]]("activation") match{
+        getConfigs(x)("activation") match{
           case "relu" => Relu
           case "softmax" => Softmax
+          case "tanh" => Tanh
+          case "sigmoid" => Sigmoid
         }
       }
       case "Convolution1D" => Dense(10,5)
       case "Dense" => {
-        val layerName = x("config").asInstanceOf[Map[String, String]]("name")
+        val layerName = getConfigs(x)("name")
         val params = weightGroups.findGroup(layerName)
-        val weight = params.findVariable(layerName + "_W:0")
-        val bias   = params.findVariable(layerName + "_b:0")
+        val weightNames = params.findAttribute("weight_names")
+        val weight = params.findVariable(weightNames.getStringValue(0))
+        val bias   = params.findVariable(weightNames.getStringValue(1))
         Dense(weight, bias)
       }
+      case "Embedding" => Dense(10, 10)
       case "Flatten" => Flatten
     }
   )
