@@ -14,7 +14,4 @@ object Relu extends Functor{
   override final def convert(data: DenseMatrix[Float]) = data.map(x => if(x > 0.0) x else 0.0.toFloat)
 
   def apply(x: DenseMatrix[Float]) = this.convert(x)
-
-  override def toString: String = functorName
-
 }

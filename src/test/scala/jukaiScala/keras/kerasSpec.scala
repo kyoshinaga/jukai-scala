@@ -6,10 +6,11 @@ package jukaiScala.keras
 
 import org.scalatest.{FlatSpec, Matchers}
 import ucar.nc2.NetcdfFile
-import ucar.nc2.{Variable, Attribute, Group}
+import ucar.nc2.{Attribute, Group, Variable}
 import ucar.ma2._
 import java.io.IOException
 
+import breeze.linalg.DenseMatrix
 import org.json4s._
 import org.json4s.DefaultFormats
 import org.json4s.JsonDSL._
@@ -116,16 +117,19 @@ class kerasSpec extends FlatSpec with Matchers {
 
     val weightGroups = checkAndGetGroup("model_weights")
 
+    def getConfigs(x: Map[String, Any]):Map[String, String] = x("config").asInstanceOf[Map[String, String]]
+
     def constNetwork(values: List[Map[String, Any]]) = values.map(
-      x => x("class_name") match{
+      x =>
+        x("class_name") match{
         case "Activation" => {
-          x("config").asInstanceOf[Map[String, String]]("activation") match{
+          getConfigs(x)("activation") match{
             case "relu" => Relu
             case "softmax" => Softmax
           }
         }
         case "Dense" => {
-          val layerName = x("config").asInstanceOf[Map[String, String]]("name")
+          val layerName = getConfigs(x)("name")
           val params = weightGroups.findGroup(layerName)
           val weightNames = params.findAttribute("weight_names")
           val weight = params.findVariable(weightNames.getStringValue(0))
@@ -140,14 +144,37 @@ class kerasSpec extends FlatSpec with Matchers {
     val testNetwork = constNetwork(configList)
 
     println(testNetwork(0).toString)
+    println(getConfigs(configList(0)))
 
-    val lname = configList(0)("config").asInstanceOf[Map[String, String]]("name")
+    val lname = getConfigs(configList(0))("name")
+    val borderMode = getConfigs(configList(0))("border_mode") match {
+      case "same" => true
+      case _ => false
+    }
+
+    println(borderMode)
 
     val pr = weightGroups.findGroup(lname)
     val weightNames = pr.findAttribute("weight_names")
 
     println(weightNames.getStringValue(0))
-    println(weightNames.getStringValue(1))
+
+    val weightConv = pr.findVariable(weightNames.getStringValue(0))
+    val dimsConv = weightConv.getDimensions
+    println(dimsConv.get(0).getLength) // Width
+    println(dimsConv.get(1).getLength) // Input Channel?
+    println(dimsConv.get(2).getLength) // Input dim
+    println(dimsConv.get(3).getLength) // Output Channel
+
+    val conv = Convolution1D(2, 5, 2, padding = true)
+
+    val m = DenseMatrix((1.0.toFloat, 2.0.toFloat), (3.0.toFloat, 4.0.toFloat), (5.0.toFloat, 6.0.toFloat))
+
+    println(conv.w)
+    println(conv.im2col(m))
+    println(conv.im2col(m) * conv.w)
+
+    println(conv.toString)
 
     1 should be (1)
   }

@@ -4,7 +4,7 @@ package jukaiScala.keras
   * Created by kenta-yoshinaga on 2016/12/26.
   */
 import breeze.linalg.{DenseVector, DenseMatrix}
-import ucar.nc2.{Variable, Group, Dimension}
+import ucar.nc2.Variable
 
 class Dense (inputDim: Int, outputDim: Int) extends Functor {
 
@@ -17,7 +17,7 @@ class Dense (inputDim: Int, outputDim: Int) extends Functor {
   override final def convert(data: DenseMatrix[Float]) = {
     val z = w.t * data
     for (i <- 0 until data.cols){
-      z(::,i) := z(::,i) + b
+      z(::,i) :+= b
     }
     z
   }
@@ -36,7 +36,7 @@ class Dense (inputDim: Int, outputDim: Int) extends Functor {
     }
   }
 
-  override def toString: String = "Dense[inputDim: " + inputDim + ", outputDim: " + outputDim + "]"
+  override def toString: String = "Dense: {inputDim: " + inputDim + ", outputDim: " + outputDim + "}"
 
   def head: String = w(0 until 2, ::).toString
 }

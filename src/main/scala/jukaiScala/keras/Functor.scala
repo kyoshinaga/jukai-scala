@@ -13,4 +13,5 @@ trait Functor {
 
   def convert(data: DenseMatrix[Float]): DenseMatrix[Float]
 
+  override def toString: String = functorName
 }
