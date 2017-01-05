@@ -181,8 +181,6 @@ class kerasSpec extends FlatSpec with Matchers {
     conv2.w := www
 
     println(conv.w)
-    println(conv.im2col(m))
-    println(conv.im2col(m) * conv.w)
 
     println(conv.convert(m))
     println(conv2.convert(conv.convert(m)))
