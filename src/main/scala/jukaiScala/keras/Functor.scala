@@ -9,7 +9,7 @@ import ucar.nc2.{Variable, Group}
 
 trait Functor {
 
-  def functorName:String
+  def functorName: String
 
   def convert(data: DenseMatrix[Double]): DenseMatrix[Double]
 

@@ -4,18 +4,18 @@ package jukaiScala.keras
   * Created by kenta-yoshinaga on 2016/12/26.
   */
 import breeze.linalg.{DenseVector, DenseMatrix}
-import ucar.nc2.Variable
+import ucar.nc2.{Variable, Group}
 
 class Dense (inputDim: Int, outputDim: Int) extends Functor {
 
-  private val w = DenseMatrix.zeros[Double](inputDim, outputDim)
+  val w = DenseMatrix.zeros[Double](inputDim, outputDim)
 
   private val b = DenseVector.zeros[Double](outputDim)
 
   override def functorName = "Dense"
 
   override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
-    val z = w.t * data
+    val z = w * data
     for (i <- 0 until data.cols){
       z(::,i) :+= b
     }
@@ -44,9 +44,14 @@ class Dense (inputDim: Int, outputDim: Int) extends Functor {
 object Dense {
   def apply(inputDim:Int, outputDim: Int) = new Dense(inputDim, outputDim)
 
-  def apply(weight: Variable, bias: Variable) = {
+  def apply(configs: Map[String, Any], weightGroups: Group) = {
+    val layerName = configs("name").toString
+    val params = weightGroups.findGroup(layerName)
+    val weightNames = params.findAttribute("weight_names")
+    val weight = params.findVariable(weightNames.getStringValue(0))
+    val bias = params.findVariable(weightNames.getStringValue(1))
     val dims = weight.getDimensions
-    if (dims.size != 2) {
+    if (dims.size != 2){
       throw new IllegalArgumentException("invalid dimension for Dense class")
     }
     val d = new Dense(dims.get(0).getLength, dims.get(1).getLength)

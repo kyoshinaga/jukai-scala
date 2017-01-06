@@ -14,9 +14,9 @@ import org.json4s.jackson.JsonMethods._
 
 class KerasModel(path:String) {
 
-  val model = NetcdfFile.open(path, null)
+  private val model = NetcdfFile.open(path, null)
 
-  val rootGroup = model.getRootGroup
+  private val rootGroup = model.getRootGroup
 
   def checkAndGetAttribute(name: String): Attribute = Option(rootGroup.findAttribute(name)) match {
     case Some(x) => x
@@ -28,10 +28,10 @@ class KerasModel(path:String) {
     case None => throw new IllegalArgumentException("cannot get " + name + " group from input model file")
   }
 
-  val kerasAttribute = checkAndGetAttribute("keras_version")
-  val modelAttribute = checkAndGetAttribute("model_config")
+  private val kerasAttribute = checkAndGetAttribute("keras_version")
+  private val modelAttribute = checkAndGetAttribute("model_config")
 
-  val weightGroups = checkAndGetGroup("model_weights")
+  private val weightGroups = checkAndGetGroup("model_weights")
 
   def parseConfigToList(config: String): List[Map[String, Any]] = {
     val jsonValue = parse(config)
@@ -40,35 +40,38 @@ class KerasModel(path:String) {
     jsonList("config").asInstanceOf[List[Map[String, Any]]]
   }
 
-  val modelValues = parseConfigToList(modelAttribute.getValue(0).toString)
+  private val modelValues = parseConfigToList(modelAttribute.getValue(0).toString)
 
-  def getConfigs(x: Map[String, Any]): Map[String, String] = x("config").asInstanceOf[Map[ String, String]]
+  def getConfigs(x: Map[String, Any]): Map[String, Any] = x("config").asInstanceOf[Map[ String, Any]]
 
-  def constructNetwork(values: List[Map[String, Any]]) = values.map(
-    x => x("class_name") match{
-      case "Activation" => {
-        getConfigs(x)("activation") match{
-          case "relu" => Relu
-          case "softmax" => Softmax
-          case "tanh" => Tanh
-          case "sigmoid" => Sigmoid
+  def constructNetwork(values: List[Map[String, Any]]):List[Functor] = values.map(
+    x => {
+      val configs = getConfigs(x)
+      val functor = x("class_name").toString match{
+        case "Activation" => {
+          configs("activation").toString match{
+            case "relu" => Relu
+            case "softmax" => Softmax
+            case "tanh" => Tanh
+            case "sigmoid" => Sigmoid
+          }
         }
+        case "Convolution1D" => {
+          Convolution1D(configs, weightGroups)
+        }
+        case "Dense" => {
+          Dense(configs, weightGroups)
+        }
+        case "Embedding" => {
+          Embedding(configs, weightGroups)
+        }
+        case "Flatten" => Flatten
       }
-      case "Convolution1D" => Dense(10,5)
-      case "Dense" => {
-        val layerName = getConfigs(x)("name")
-        val params = weightGroups.findGroup(layerName)
-        val weightNames = params.findAttribute("weight_names")
-        val weight = params.findVariable(weightNames.getStringValue(0))
-        val bias   = params.findVariable(weightNames.getStringValue(1))
-        Dense(weight, bias)
-      }
-      case "Embedding" => Dense(10, 10)
-      case "Flatten" => Flatten
+      functor
     }
   )
 
-  val graphSsplit = constructNetwork(modelValues)
+  val graph:List[Functor] = constructNetwork(modelValues)
 
 }
 

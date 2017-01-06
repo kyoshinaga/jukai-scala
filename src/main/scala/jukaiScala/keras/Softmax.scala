@@ -12,9 +12,9 @@ object Softmax extends Functor{
   override def functorName = "Softmax"
 
   override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
-    for (x <- 0 until data.cols) {
-      val v = data(::, x)
-      data(::, x) := (exp(v) :/= exp(softmax(v)))
+    for (y <- 0 until data.rows) {
+      val v = data(y, ::)
+      data(y, ::) := (exp(v) :/= exp(softmax(v)))
     }
     data
   }
