@@ -16,16 +16,11 @@ class DenseSpec extends FlatSpec with Matchers{
     val inputData = csvread(new File("./target/test-classes/data/dense/dense_input.csv"),separator = ',')
     val goldData = csvread(new File("./target/test-classes/data/dense/dense_gold.csv"),separator = ',')
 
-    println(model.graph(0).asInstanceOf[Dense].w)
+    val output = model.convert(inputData)
 
-    println(inputData.t)
+    val diff = abs(output - goldData).forall(x => x < 1e-6)
 
-    val output = model.graph(0).convert(inputData)
-
-//    val diff = abs(output - goldData).forall(x => x < 1e-6)
-
-//    diff should be (true)
-    1 should be (1)
+    diff should be (true)
   }
 
 }

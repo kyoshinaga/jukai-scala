@@ -9,7 +9,7 @@ object Flatten extends Functor{
 
   override def functorName = "Flatten"
 
-  override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = data.reshape(data.rows * data.cols, 1)
+  override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = data.t.toDenseVector.toDenseMatrix
 
   override def toString: String = functorName
 

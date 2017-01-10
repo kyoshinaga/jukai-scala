@@ -4,9 +4,9 @@ package jukaiScala.keras
   * Created by kenta-yoshinaga on 2016/12/07.
   */
 
+import breeze.linalg.DenseMatrix
 import ucar.nc2.NetcdfFile
-import ucar.nc2.{Variable, Attribute, Group}
-
+import ucar.nc2.{Attribute, Group, Variable}
 import org.json4s._
 import org.json4s.DefaultFormats
 import org.json4s.JsonDSL._
@@ -72,6 +72,15 @@ class KerasModel(path:String) {
   )
 
   val graph:List[Functor] = constructNetwork(modelValues)
+
+  def convert(input: DenseMatrix[Double]): DenseMatrix[Double] = callFunctors(input, graph)
+
+  private def callFunctors(input: DenseMatrix[Double], unprocessed:List[Functor]): DenseMatrix[Double] = unprocessed match {
+    case functor :: tail =>
+      val interOutput = functor.convert(input)
+      callFunctors(interOutput, tail)
+    case Nil => input
+  }
 
 }
 

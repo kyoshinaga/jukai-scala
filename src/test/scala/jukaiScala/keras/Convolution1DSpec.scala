@@ -17,7 +17,7 @@ class Convolution1DSpec extends FlatSpec with Matchers{
     val inputData = csvread(new File("./target/test-classes/data/convolution1d/convolution1d_input.csv"),separator = ',')
     val goldData = csvread(new File("./target/test-classes/data/convolution1d/convolution1d_gold.csv"),separator = ',')
 
-    val output = model.graph(0).convert(inputData)
+    val output = model.convert(inputData)
 
     val diff = abs(output - goldData).forall(x => x < 1e-6)
 

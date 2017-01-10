@@ -10,14 +10,14 @@ class Dense (inputDim: Int, outputDim: Int) extends Functor {
 
   val w = DenseMatrix.zeros[Double](inputDim, outputDim)
 
-  private val b = DenseVector.zeros[Double](outputDim)
+  val b = DenseVector.zeros[Double](outputDim)
 
   override def functorName = "Dense"
 
   override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = {
-    val z = w * data
-    for (i <- 0 until data.cols){
-      z(::,i) :+= b
+    val z = data * w
+    for (i <- 0 until data.rows){
+      z(i,::) :+= b.t
     }
     z
   }

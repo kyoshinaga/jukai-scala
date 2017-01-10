@@ -5,26 +5,21 @@ package jukaiScala.keras
   */
 
 import org.scalatest.{FlatSpec, Matchers}
-import ucar.nc2.NetcdfFile
-import ucar.nc2.{Attribute, Group, Variable}
-import ucar.ma2._
-import java.io.IOException
-
-import breeze.linalg.DenseMatrix
-import org.json4s._
-import org.json4s.DefaultFormats
-import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods._
+import breeze.linalg.{csvread, DenseMatrix}
+import breeze.numerics.abs
+import java.io._
 
 class KerasModelSpec extends FlatSpec with Matchers {
   "kerasModel" should "load linear-network" in {
 
-    val filePath = "./target/test-classes/data/keras_sample.h5"
+    val model = KerasModel("./target/test-classes/data/ssplitModel/ssplit_model.h5")
+    val inputData = csvread(new File("./target/test-classes/data/ssplitModel/ssplit_input.csv"),separator = ',')
+    val goldData = csvread(new File("./target/test-classes/data/ssplitModel/ssplit_gold.csv"), separator = ',')
 
-    val model = KerasModel(filePath)
+    val output = model.convert(inputData)
 
-    model.graph.foreach(x => println(x.toString))
+    val diff = abs(output - goldData).forall(x => x < 1e-6)
 
-    1 should be (1)
+    diff should be (true)
   }
 }
