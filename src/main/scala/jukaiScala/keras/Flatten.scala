@@ -11,6 +11,4 @@ object Flatten extends Functor{
 
   override final def convert(data: DenseMatrix[Double]): DenseMatrix[Double] = data.t.toDenseVector.toDenseMatrix
 
-  override def toString: String = functorName
-
 }

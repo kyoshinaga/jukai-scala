@@ -66,6 +66,7 @@ class KerasModel(path:String) {
           Embedding(configs, weightGroups)
         }
         case "Flatten" => Flatten
+        case _ => Empty
       }
       functor
     }
