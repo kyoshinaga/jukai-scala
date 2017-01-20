@@ -20,7 +20,7 @@ class Embedding(vocabulary: Int, outdim: Int) extends Functor{
     z
   }
 
-  val w = new Array[DenseVector[Double]](vocabulary).map(_ => DenseVector.zeros[Double](outdim))
+  private val w = new Array[DenseVector[Double]](vocabulary).map(_ => DenseVector.zeros[Double](outdim))
 
   def h5load(weight: Variable):Unit = {
     val weightData = weight.read

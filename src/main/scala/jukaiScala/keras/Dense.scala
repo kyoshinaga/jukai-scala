@@ -8,9 +8,9 @@ import ucar.nc2.{Variable, Group}
 
 class Dense (inputDim: Int, outputDim: Int) extends Functor {
 
-  val w = DenseMatrix.zeros[Double](inputDim, outputDim)
+  private val w = DenseMatrix.zeros[Double](inputDim, outputDim)
 
-  val b = DenseVector.zeros[Double](outputDim)
+  private val b = DenseVector.zeros[Double](outputDim)
 
   override def functorName = "Dense"
 

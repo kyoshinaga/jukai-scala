@@ -4,11 +4,9 @@ package jukaiScala.main
   * Created by kenta-yoshinaga on 2017/01/16.
   */
 
-import java.io._
-
+import breeze.linalg.argmax
 import jukaiScala.keras._
 import jukaiScala.util._
-import breeze.linalg.argmax
 
 import scala.collection.mutable.ListBuffer
 
@@ -19,7 +17,7 @@ class KerasParser(modelPath: String, tablePath: String) {
 
   private val tagset: Map[Int, String] =  Map(0 -> "B", 1 -> "I", 2 -> "O")
 
-  def parsing(str: String): Unit = {
+  def parsing(str: String): List[String] = {
     // For dummy input to indicate beginning of sentence.
     val s = "\n" + str
     val inputData = table.encode(s)
@@ -53,8 +51,7 @@ class KerasParser(modelPath: String, tablePath: String) {
         case _ =>
       }
     }
-    println(ranges.mkString(","))
-    ranges.foreach(x => println(str.substring(x._1, x._2)))
+    ranges.map{x => str.substring(x._1, x._2)}.toList
   }
 
 }
