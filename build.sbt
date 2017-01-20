@@ -1,7 +1,3 @@
-import AssemblyKeys._
-
-assemblySettings
-
 name := "jukai-scala"
 
 scalaVersion := "2.11.7"
@@ -14,11 +10,14 @@ parallelExecution in Test := false
 
 crossPaths := false
 
+scalacOptions ++= Seq("-deprecation", "-feature")
+
 mainClass in assembly := Some("jukaiScala.main.KerasParser")
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
-  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases"
+  "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases",
+  "Unidata maven repository" at "http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases"
 )
 
 libraryDependencies ++= Seq(
@@ -28,7 +27,8 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.12",
   "org.scalanlp" %% "breeze-natives" % "0.12",
   "org.scalanlp" %% "breeze-viz" % "0.12",
-  "edu.ucar" % "cdm" % "4.5.5" % "provided",
+  "log4j" % "log4j" % "1.2.14",
+  "edu.ucar" % "cdm" % "4.6.8",
   "org.json4s" %% "json4s-jackson" % "3.3.0",
   "com.ibm.icu" % "icu4j" % "49.1"
 )

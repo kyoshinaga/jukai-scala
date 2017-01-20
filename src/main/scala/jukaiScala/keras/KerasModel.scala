@@ -5,12 +5,9 @@ package jukaiScala.keras
   */
 
 import breeze.linalg.DenseMatrix
-import ucar.nc2.NetcdfFile
-import ucar.nc2.{Attribute, Group, Variable}
-import org.json4s._
-import org.json4s.DefaultFormats
-import org.json4s.JsonDSL._
+import org.json4s.{DefaultFormats, _}
 import org.json4s.jackson.JsonMethods._
+import ucar.nc2.{Attribute, Group, NetcdfFile}
 
 class KerasModel(path:String) {
 
