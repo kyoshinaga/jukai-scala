@@ -10,7 +10,7 @@ class SsplitSpec extends FlatSpec with Matchers{
   "ssplit" should "get result" in {
 
     //val ssplit = Ssplit("./target/test-classes/data/ssplit_model_bio_bunsetsu.h5", "./target/test-classes/data/jpnLookup.json")
-    val ssplit = kerasParser("./target/test-classes/data/ssplit_model_bio.h5", "./target/test-classes/data/jpnLookup.json")
+    val ssplit = KerasParser("./target/test-classes/data/ssplit_model_bio.h5", "./target/test-classes/data/jpnLookup.json")
 
     val str = "詰め将棋の本を買ってきました。駒と盤は持っています。これなんかどうですか？やっぱりないのでしょうかね・・・・↓これなんかどうですか？"
 

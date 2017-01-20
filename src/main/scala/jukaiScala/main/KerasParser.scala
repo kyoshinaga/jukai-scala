@@ -12,7 +12,7 @@ import breeze.linalg.argmax
 
 import scala.collection.mutable.ListBuffer
 
-class kerasParser(modelPath: String, tablePath: String) {
+class KerasParser(modelPath: String, tablePath: String) {
 
   private val model = KerasModel(modelPath)
   private val table = LookupTable(tablePath)
@@ -59,15 +59,15 @@ class kerasParser(modelPath: String, tablePath: String) {
 
 }
 
-object kerasParser{
+object KerasParser{
 
-  def apply(modelPath:String, tablePath: String) = new kerasParser(modelPath, tablePath)
+  def apply(modelPath:String, tablePath: String) = new KerasParser(modelPath, tablePath)
 
   def main(args: Array[String]): Unit = {
     val modelPath = args(0)
     val tablePath = args(1)
 
-    val s = new kerasParser(modelPath, tablePath)
+    val s = new KerasParser(modelPath, tablePath)
     println(s.parsing(args(2)))
   }
 }

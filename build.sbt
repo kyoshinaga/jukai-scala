@@ -14,7 +14,7 @@ parallelExecution in Test := false
 
 crossPaths := false
 
-mainClass in assembly := Some("jukaiScala.keras.CuiMain")
+mainClass in assembly := Some("jukaiScala.main.KerasParser")
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
   "org.scalanlp" %% "breeze" % "0.12",
   "org.scalanlp" %% "breeze-natives" % "0.12",
   "org.scalanlp" %% "breeze-viz" % "0.12",
-  "edu.ucar" % "cdm" % "4.5.5" exclude("commons-logging", "commons-logging"),
+  "edu.ucar" % "cdm" % "4.5.5" % "provided",
   "org.json4s" %% "json4s-jackson" % "3.3.0",
   "com.ibm.icu" % "icu4j" % "49.1"
 )
